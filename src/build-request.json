@@ -1,0 +1,76 @@
+{
+  "kind": "build_request",
+  "title": "Fix onboarding tour page scroll functionality after clicking Get Started",
+  "priority": "high",
+  "requirements": [
+    {
+      "id": "REQ-95",
+      "text": "Fix the scroll functionality on the onboarding tour page that occurs after clicking the 'Get Started' button on the landing page. Diagnose and resolve the issue preventing vertical scrolling on the WelcomeScreen component and throughout the OnboardingFlow. Ensure the page content (including 'Welcome to NEXY MYNDIS' title, subtitle, feature grid with 4 items - Manage Your Plan, Find Providers, Track Goals, Stay Compliant - and Skip Tour button) is fully scrollable when content exceeds viewport height.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "why is it that after i click fet stareted the next page cant be scrollable downwards all of this page hanged Welcome to NEXY MYNDIS\nYour personal NDIS support coordination platform\n\nWe're here to make managing your NDIS plan simple and stress-free. Let's take a quick tour of what you can do.\n\nManage Your Plan\nUpload and track your NDIS plan and budget\n\nFind Providers\nSearch and book services with trusted providers\n\nTrack Goals\nMonitor your progress towards your goals\n\nStay Compliant\nAutomatic compliance tracking and reporting\n\nSkip Tour"
+        ]
+      },
+      "acceptanceCriteria": [
+        "After clicking 'Get Started' on the landing page, the onboarding tour page loads without any scroll-blocking behavior",
+        "All content on the WelcomeScreen is vertically scrollable when it exceeds the viewport height",
+        "The page body or container does not have overflow:hidden or fixed positioning preventing scroll",
+        "The OnboardingFlow overlay component allows proper scrolling of its content",
+        "Users can scroll down to view all onboarding content including all four feature cards and the Skip Tour button",
+        "The scroll behavior works correctly on both desktop and mobile viewports"
+      ]
+    },
+    {
+      "id": "REQ-96",
+      "text": "Inspect the OnboardingFlow component (frontend/src/components/onboarding/OnboardingFlow.tsx) and WelcomeScreen component (frontend/src/components/onboarding/WelcomeScreen.tsx) for CSS styles that may be preventing scrolling, such as fixed positioning on parent containers, overflow:hidden on body or wrapper elements, or height constraints that prevent content overflow. Remove or adjust these styles to restore normal scroll functionality.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ]
+      },
+      "acceptanceCriteria": [
+        "OnboardingFlow wrapper allows scrolling and does not apply fixed positioning that breaks scroll",
+        "WelcomeScreen container has proper height and overflow settings to enable vertical scrolling",
+        "Body scroll lock (if implemented) is removed or properly configured to allow scrolling within the onboarding modal",
+        "All CSS position, overflow, and height properties are reviewed and corrected"
+      ]
+    },
+    {
+      "id": "REQ-97",
+      "text": "Verify that the App.tsx component and router configuration do not inadvertently block scrolling when the onboarding flow is active. Ensure the ProfileSetup modal and OnboardingFlow overlay rendering logic allows proper document scrolling or implements internal scrolling correctly if using modal overlays.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The onboarding flow overlay or modal has scrollable content area if it uses fixed/absolute positioning",
+        "Document body scrolling is preserved or intentionally managed with overflow-auto on modal content containers",
+        "Navigation between onboarding steps maintains scroll functionality",
+        "The scroll issue does not recur when progressing through onboarding screens"
+      ]
+    }
+  ],
+  "constraints": [
+    "Do not modify the Internet Identity authentication system (frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts)",
+    "Do not modify the React Router configuration in ways that break existing navigation",
+    "Maintain all existing functionality of the onboarding flow including localStorage persistence and skip options",
+    "Do not alter the visual design or layout of the onboarding screens, only fix the scroll behavior"
+  ],
+  "nonGoals": [
+    "Redesigning the onboarding flow UI or content",
+    "Changing the onboarding flow logic or state management",
+    "Modifying unrelated components outside the onboarding system",
+    "Adding new features to the onboarding experience"
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-20T21:17:55.160Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 3,
+    "implemented": 3,
+    "items": [
+      {
+        "id": "REQ-95",
+        "summary": "Fix the scroll functionality on the onboarding tour page that occurs after clicking the 'Get Started' button on the landing page. Diagnose and resolve the issue preventing vertical scrolling on the WelcomeScreen component and throughout the OnboardingFlow. Ensure the page content (including 'Welcome to NEXY MYNDIS' title, subtitle, feature grid with 4 items - Manage Your Plan, Find Providers, Track Goals, Stay Compliant - and Skip Tour button) is fully scrollable when content exceeds viewport height.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/onboarding/OnboardingFlow.tsx",
+          "frontend/src/components/onboarding/WelcomeScreen.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/onboarding/OnboardingFlow.tsx"
+        ]
+      },
+      {
+        "id": "REQ-96",
+        "summary": "Inspect the OnboardingFlow component (frontend/src/components/onboarding/OnboardingFlow.tsx) and WelcomeScreen component (frontend/src/components/onboarding/WelcomeScreen.tsx) for CSS styles that may be preventing scrolling, such as fixed positioning on parent containers, overflow:hidden on body or wrapper elements, or height constraints that prevent content overflow. Remove or adjust these styles to restore normal scroll functionality.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/onboarding/OnboardingFlow.tsx",
+          "frontend/src/components/onboarding/WelcomeScreen.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/onboarding/OnboardingFlow.tsx"
+        ]
+      },
+      {
+        "id": "REQ-97",
+        "summary": "Verify that the App.tsx component and router configuration do not inadvertently block scrolling when the onboarding flow is active. Ensure the ProfileSetup modal and OnboardingFlow overlay rendering logic allows proper document scrolling or implements internal scrolling correctly if using modal overlays.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/App.tsx",
+          "frontend/src/components/onboarding/OnboardingFlow.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/App.tsx",
+          "frontend/src/components/onboarding/OnboardingFlow.tsx"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "build-request.json",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/src/App.tsx",
+    "frontend/src/components/onboarding/OnboardingFlow.tsx",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

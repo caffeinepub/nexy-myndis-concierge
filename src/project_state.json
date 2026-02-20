@@ -1,0 +1,931 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 23,
+  "summary": "NEXY_MYNDIS CONCIERGE - Prototype NDIS coordination platform on Internet Computer with manual processes replacing AI agents, featuring 4 role-based interfaces, Internet Identity auth, and best-in-class UI with full design system implementation",
+  "architectural_notes": [
+    "Next.js 15 with TypeScript, TailwindCSS, Radix UI frontend",
+    "PostgreSQL with Prisma ORM for database",
+    "Role-based access control for 4 user types with varying interface complexity",
+    "Design system: Teal (#0D7377), Navy (#1A1A2E), Inter font, rounded corners, high contrast",
+    "Mobile-first responsive with native iOS/Android apps planned",
+    "Internet Computer backend with Motoko canisters replacing Node.js/PostgreSQL stack",
+    "Internet Identity for authentication replacing NextAuth.js",
+    "Canister-based file storage replacing AWS S3",
+    "Manual review workflows replacing all AI agent automation",
+    "Internet Computer native blockchain audit trails replacing Ethereum integration"
+  ],
+  "known_issues": [
+    "Onboarding tour page becomes non-scrollable after clicking 'Get Started' button, causing content to hang and preventing vertical scrolling"
+  ],
+  "isFixRequest": true,
+  "existing_features": [
+    {
+      "id": "feature-implement-user-authentication-system-with-role-based-access-control-supporting-4-user-types-ndis-participants-guardians-carers-service-providers-and-plan-managers-use-internet-identity-for-authentication-and-store-user-roles-and-permissions-in-the-backend",
+      "title": "Implement user authentication system with role-based access control supporting 4 user types: NDIS Participants, Guardians/Carers, Service Providers, and Plan Managers. Use Internet Identity for authentication and store user roles and permissions in the backend.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-participant-dashboard-interface-with-simplified-ui-featuring-large-interactive-elements-plain-language-explanations-visual-progress-tracking-for-goals-and-wcag-2-1-aa-accessibility-compliance-include-plan-overview-provider-search-booking-goal-tracking-and-budget-visibility",
+      "title": "Create Participant dashboard interface with simplified UI featuring large interactive elements, plain language explanations, visual progress tracking for goals, and WCAG 2.1 AA accessibility compliance. Include plan overview, provider search/booking, goal tracking, and budget visibility.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-guardian-carer-dashboard-interface-with-multi-participant-management-capabilities-scenario-modeling-tools-for-care-planning-comprehensive-reporting-across-all-managed-participants-and-opa-office-of-the-public-advocate-functions-for-legal-guardian-workflows",
+      "title": "Create Guardian/Carer dashboard interface with multi-participant management capabilities, scenario modeling tools for care planning, comprehensive reporting across all managed participants, and OPA (Office of the Public Advocate) functions for legal guardian workflows.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-service-provider-dashboard-interface-with-efficient-client-management-automated-invoice-submission-workflows-smart-scheduling-system-with-availability-management-and-automated-compliance-documentation-generation",
+      "title": "Create Service Provider dashboard interface with efficient client management, automated invoice submission workflows, smart scheduling system with availability management, and automated compliance documentation generation.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-plan-manager-dashboard-interface-with-advanced-budget-monitoring-across-multiple-participants-risk-assessment-tools-highlighting-budget-anomalies-automated-ndia-reporting-generation-and-fraud-detection-alerts-with-transaction-flagging",
+      "title": "Create Plan Manager dashboard interface with advanced budget monitoring across multiple participants, risk assessment tools highlighting budget anomalies, automated NDIA reporting generation, and fraud detection alerts with transaction flagging.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-comprehensive-accessibility-features-throughout-all-interfaces-including-wcag-2-1-aa-compliant-color-contrast-minimum-4-5-1-for-text-keyboard-navigation-support-for-all-interactive-elements-proper-aria-labels-and-roles-focus-indicators-semantic-html-structure-and-screen-reader-compatibility-ensure-all-form-inputs-have-associated-labels-and-error-messages-are-clearly-announced",
+      "title": "Apply comprehensive accessibility features throughout all interfaces including WCAG 2.1 AA compliant color contrast (minimum 4.5:1 for text), keyboard navigation support for all interactive elements, proper ARIA labels and roles, focus indicators, semantic HTML structure, and screen reader compatibility. Ensure all form inputs have associated labels and error messages are clearly announced.",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-design-system-using-the-specified-color-palette-primary-teal-0d7377-navy-1a1a2e-success-green-and-warning-amber-apply-warm-approachable-styling-with-rounded-corners-throughout-the-interface-soft-shadows-and-inter-font-family-ensure-mobile-first-responsive-design-with-breakpoints-for-tablet-and-desktop-viewports",
+      "title": "Implement design system using the specified color palette: primary teal (#0D7377), navy (#1A1A2E), success green, and warning amber. Apply warm, approachable styling with rounded corners throughout the interface, soft shadows, and Inter font family. Ensure mobile-first responsive design with breakpoints for tablet and desktop viewports.",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-welcoming-onboarding-flow-for-new-participants-that-introduces-key-features-explains-ndis-plan-basics-in-plain-language-guides-through-profile-completion-and-demonstrates-how-to-search-providers-and-upload-a-plan-include-skip-options-and-progress-indicators-target-completion-time-under-30-minutes",
+      "title": "Create welcoming onboarding flow for new participants that introduces key features, explains NDIS plan basics in plain language, guides through profile completion, and demonstrates how to search providers and upload a plan. Include skip options and progress indicators. Target completion time under 30 minutes.",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-cohesive-visual-theme-emphasizing-warmth-trust-and-accessibility-with-soft-calming-gradients-generous-whitespace-and-friendly-iconography-use-rounded-geometric-shapes-subtle-depth-through-shadows-and-harmonious-color-transitions-ensure-the-design-feels-supportive-and-non-intimidating-for-users-with-varying-technical-abilities-and-cognitive-loads",
+      "title": "Create a cohesive visual theme emphasizing warmth, trust, and accessibility with soft, calming gradients, generous whitespace, and friendly iconography. Use rounded geometric shapes, subtle depth through shadows, and harmonious color transitions. Ensure the design feels supportive and non-intimidating for users with varying technical abilities and cognitive loads.",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-landing-page-with-full-screen-hero-section-featuring-gradient-background-linear-gradient-135deg-from-0d7377-to-1a1a2e-centered-hero-content-with-large-title-4rem-weight-700-gradient-text-fill-from-white-to-e0f2f1-subtitle-1-5rem-0-9-opacity-and-prominent-white-cta-button-with-teal-text-rounded-corners-16px-padding-20px-48px-hover-transform-translatey-2px-and-shadow-effects",
+      "title": "Create landing page (/) with full-screen hero section featuring gradient background (linear-gradient 135deg from #0d7377 to #1a1a2e), centered hero content with large title (4rem, weight 700, gradient text fill from white to #e0f2f1), subtitle (1.5rem, 0.9 opacity), and prominent white CTA button with teal text, rounded corners (16px), padding 20px 48px, hover transform translateY(-2px), and shadow effects",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-role-selection-page-get-started-with-card-based-grid-layout-grid-template-columns-repeat-auto-fit-minmax-300px-1fr-role-cards-featuring-80px-icon-containers-with-gradient-backgrounds-role-titles-1-5rem-weight-700-descriptions-feature-lists-with-checkmark-bullets-hover-effects-translatey-8px-teal-border-enhanced-shadow-and-rounded-corners-24px",
+      "title": "Create role selection page (/get-started) with card-based grid layout (grid-template-columns repeat auto-fit minmax 300px 1fr), role cards featuring 80px icon containers with gradient backgrounds, role titles (1.5rem, weight 700), descriptions, feature lists with checkmark bullets, hover effects (translateY -8px, teal border, enhanced shadow), and rounded corners (24px)",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-multi-step-registration-flow-register-role-with-progress-bar-4px-height-gradient-fill-from-0d7377-to-00b894-registration-card-max-width-600px-centered-rounded-24px-form-sections-with-titles-1-875rem-and-subtitles-form-inputs-with-16px-20px-padding-2px-borders-e0e0e0-12px-border-radius-focus-states-with-teal-border-and-shadow-and-full-width-submit-button-with-gradient-background",
+      "title": "Create multi-step registration flow (/register/[role]) with progress bar (4px height, gradient fill from #0d7377 to #00b894), registration card (max-width 600px, centered, rounded 24px), form sections with titles (1.875rem) and subtitles, form inputs with 16px 20px padding, 2px borders (#e0e0e0), 12px border radius, focus states with teal border and shadow, and full-width submit button with gradient background",
+      "reqIds": [
+        "REQ-25"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-enhance-dashboard-page-dashboard-with-welcome-section-featuring-gradient-background-135deg-from-0d7377-to-1a1a2e-white-text-2-5rem-title-stats-grid-repeat-auto-fit-minmax-250px-1fr-stat-cards-with-56px-icon-containers-e0f2f1-background-teal-icons-2rem-value-text-hover-lift-effects-and-two-column-main-content-layout-2fr-1fr",
+      "title": "Enhance dashboard page (/dashboard) with welcome section featuring gradient background (135deg from #0d7377 to #1a1a2e), white text, 2.5rem title, stats grid (repeat auto-fit minmax 250px 1fr), stat cards with 56px icon containers (#e0f2f1 background, teal icons), 2rem value text, hover lift effects, and two-column main content layout (2fr 1fr)",
+      "reqIds": [
+        "REQ-26"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-plan-upload-interface-plan-upload-with-centered-card-max-width-800px-gradient-header-135deg-from-0d7377-to-1a1a2e-drag-drop-upload-area-with-3px-dashed-border-64px-32px-padding-hover-and-dragging-states-border-color-0d7377-background-e0f2f1-scale-1-02-80px-upload-icon-container-and-ai-processing-animation-with-100px-pulsing-brain-icon-pulse-keyframe-animation-scaling-1-to-1-1",
+      "title": "Create plan upload interface (/plan/upload) with centered card (max-width 800px), gradient header (135deg from #0d7377 to #1a1a2e), drag-drop upload area with 3px dashed border, 64px 32px padding, hover and dragging states (border color #0d7377, background #e0f2f1, scale 1.02), 80px upload icon container, and AI processing animation with 100px pulsing brain icon (pulse keyframe animation scaling 1 to 1.1)",
+      "reqIds": [
+        "REQ-27"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-provider-search-and-discovery-interface-providers-with-search-section-white-background-32px-padding-rounded-16px-search-grid-2fr-1fr-1fr-1fr-columns-search-input-with-56px-left-padding-for-icon-filter-selects-ai-recommendation-banner-gradient-from-0d7377-to-00b894-white-text-60px-icon-and-provider-cards-grid-repeat-auto-fit-minmax-400px-1fr-with-hover-lift-effects-translatey-4px",
+      "title": "Create provider search and discovery interface (/providers) with search section (white background, 32px padding, rounded 16px), search grid (2fr 1fr 1fr 1fr columns), search input with 56px left padding for icon, filter selects, AI recommendation banner (gradient from #0d7377 to #00b894, white text, 60px icon), and provider cards grid (repeat auto-fit minmax 400px 1fr) with hover lift effects (translateY -4px)",
+      "reqIds": [
+        "REQ-28"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-style-provider-cards-with-80px-avatar-containers-rounded-16px-e0f2f1-background-provider-info-section-with-name-1-25rem-weight-700-specialty-tags-star-rating-display-with-yellow-stars-ffc107-detail-items-grid-1fr-1fr-specialty-tags-e0f2f1-background-teal-text-20px-border-radius-6px-12px-padding-and-action-buttons-primary-gradient-secondary-white-with-teal-border",
+      "title": "Style provider cards with 80px avatar containers (rounded 16px, #e0f2f1 background), provider info section with name (1.25rem, weight 700), specialty tags, star rating display with yellow stars (#ffc107), detail items grid (1fr 1fr), specialty tags (#e0f2f1 background, teal text, 20px border radius, 6px 12px padding), and action buttons (primary gradient, secondary white with teal border)",
+      "reqIds": [
+        "REQ-29"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-fixed-navigation-bar-with-glassmorphism-effect-rgba-255-255-255-0-95-background-backdrop-filter-blur-20px-max-width-1400px-container-nav-brand-with-40px-logo-gradient-background-rounded-10px-horizontal-nav-menu-with-8px-gap-nav-links-12px-16px-padding-rounded-8px-hover-background-e0f2f1-active-state-with-teal-background-and-mobile-menu-toggle-with-responsive-breakpoint-at-768px",
+      "title": "Implement fixed navigation bar with glassmorphism effect (rgba 255 255 255 0.95 background, backdrop-filter blur 20px), max-width 1400px container, nav brand with 40px logo (gradient background, rounded 10px), horizontal nav menu with 8px gap, nav links (12px 16px padding, rounded 8px, hover background #e0f2f1, active state with teal background), and mobile menu toggle with responsive breakpoint at 768px",
+      "reqIds": [
+        "REQ-30"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-user-profile-section-to-navigation-with-40px-circular-avatar-gradient-background-from-0d7377-to-00b894-user-info-text-aligned-right-showing-name-0-875rem-weight-600-and-role-0-75rem-capitalized-and-hide-user-info-text-on-mobile-devices",
+      "title": "Add user profile section to navigation with 40px circular avatar (gradient background from #0d7377 to #00b894), user info text aligned right showing name (0.875rem, weight 600) and role (0.75rem, capitalized), and hide user info text on mobile devices",
+      "reqIds": [
+        "REQ-31"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-page-transition-animations-with-enter-exit-states-opacity-0-to-1-translatey-20px-to-0-for-enter-translatey-0-to-20px-for-exit-0-3s-ease-transitions-loading-skeleton-animations-gradient-background-with-200-size-sliding-animation-from-200-to-200-position-1-5s-infinite-and-loading-spinner-40px-size-4px-border-teal-top-border-spin-animation-1s-linear-infinite",
+      "title": "Implement page transition animations with enter/exit states (opacity 0 to 1, translateY 20px to 0 for enter, translateY 0 to -20px for exit, 0.3s ease transitions), loading skeleton animations (gradient background with 200% size, sliding animation from 200% to -200% position, 1.5s infinite), and loading spinner (40px size, 4px border, teal top border, spin animation 1s linear infinite)",
+      "reqIds": [
+        "REQ-32"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-comprehensive-responsive-design-with-mobile-first-approach-container-max-width-1400px-consistent-8px-grid-spacing-system-12-24px-border-radius-range-subtle-shadows-4px-to-16px-blur-with-low-opacity-smooth-transitions-0-2s-to-0-3s-ease-and-proper-breakpoints-at-768px-for-tablet-and-desktop-layouts",
+      "title": "Apply comprehensive responsive design with mobile-first approach, container max-width 1400px, consistent 8px grid spacing system, 12-24px border radius range, subtle shadows (4px to 16px blur with low opacity), smooth transitions (0.2s to 0.3s ease), and proper breakpoints at 768px for tablet and desktop layouts",
+      "reqIds": [
+        "REQ-33"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-global-styles-to-enforce-inter-font-family-throughout-the-application-maintain-specified-color-palette-with-primary-teal-0d7377-navy-1a1a2e-success-green-warning-amber-and-neutral-grays-ensure-all-text-meets-wcag-2-1-aa-contrast-requirements-minimum-4-5-1-and-apply-consistent-hover-focus-and-active-states-across-all-interactive-elements",
+      "title": "Update global styles to enforce Inter font family throughout the application, maintain specified color palette with primary teal (#0d7377), navy (#1a1a2e), success green, warning amber, and neutral grays, ensure all text meets WCAG 2.1 AA contrast requirements (minimum 4.5:1), and apply consistent hover, focus, and active states across all interactive elements",
+      "reqIds": [
+        "REQ-34"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-animated-hero-section-elements-to-the-landing-page-including-animated-gradient-text-with-shimmer-effect-fade-in-animations-for-title-and-subtitle-staggered-timing-0-2s-delay-for-title-0-4s-for-subtitle-and-floating-particle-background-effect-with-subtle-animated-dots-or-shapes-moving-slowly-across-the-gradient-backdrop",
+      "title": "Add animated hero section elements to the landing page including animated gradient text with shimmer effect, fade-in animations for title and subtitle (staggered timing: 0.2s delay for title, 0.4s for subtitle), and floating particle background effect with subtle animated dots or shapes moving slowly across the gradient backdrop",
+      "reqIds": [
+        "REQ-35"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-enhance-the-cta-button-on-landing-page-with-advanced-interactive-states-including-scale-up-on-hover-scale-1-05-glow-effect-with-teal-shadow-spreading-outward-ripple-animation-on-click-and-micro-interaction-feedback-with-smooth-spring-physics-transitions",
+      "title": "Enhance the CTA button on landing page with advanced interactive states including scale-up on hover (scale 1.05), glow effect with teal shadow spreading outward, ripple animation on click, and micro-interaction feedback with smooth spring physics transitions",
+      "reqIds": [
+        "REQ-36"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-trust-indicators-section-below-hero-on-landing-page-featuring-animated-counter-statistics-e-g-10-000-ndis-participants-supported-50m-budgets-managed-95-user-satisfaction-each-counting-up-from-0-when-scrolled-into-view-with-easing-animation-accompanied-by-relevant-icons",
+      "title": "Add trust indicators section below hero on landing page featuring animated counter statistics (e.g., '10,000+ NDIS Participants Supported', '$50M+ Budgets Managed', '95% User Satisfaction'), each counting up from 0 when scrolled into view with easing animation, accompanied by relevant icons",
+      "reqIds": [
+        "REQ-37"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-enhance-the-three-feature-cards-on-landing-page-with-interactive-hover-states-including-3d-tilt-effect-following-mouse-position-elevated-shadow-on-hover-subtle-background-gradient-shift-and-icon-animations-scale-rotate-or-bounce-when-card-is-hovered",
+      "title": "Enhance the three feature cards on landing page with interactive hover states including 3D tilt effect following mouse position, elevated shadow on hover, subtle background gradient shift, and icon animations (scale, rotate, or bounce) when card is hovered",
+      "reqIds": [
+        "REQ-38"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-testimonials-or-social-proof-section-to-landing-page-with-carousel-slider-functionality-displaying-quotes-from-users-or-endorsements-with-star-ratings-user-avatars-placeholder-role-badges-and-smooth-automatic-rotation-6-8-seconds-per-slide-with-manual-navigation-controls",
+      "title": "Add testimonials or social proof section to landing page with carousel/slider functionality, displaying quotes from users or endorsements with star ratings, user avatars (placeholder), role badges, and smooth automatic rotation (6-8 seconds per slide) with manual navigation controls",
+      "reqIds": [
+        "REQ-39"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-smooth-scroll-behavior-and-scroll-triggered-animations-throughout-landing-page-where-sections-fade-in-and-slide-up-as-user-scrolls-down-with-parallax-effect-on-hero-background-gradient-slower-scroll-speed-than-content-for-depth-perception",
+      "title": "Implement smooth scroll behavior and scroll-triggered animations throughout landing page where sections fade in and slide up as user scrolls down, with parallax effect on hero background gradient (slower scroll speed than content) for depth perception",
+      "reqIds": [
+        "REQ-40"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-interactive-demo-preview-or-video-section-to-landing-page-showing-platform-in-action-with-play-button-overlay-modal-video-player-or-embedded-player-and-smooth-open-close-transitions-include-thumbnail-preview-with-subtle-zoom-in-effect-on-hover",
+      "title": "Add interactive demo preview or video section to landing page showing platform in action, with play button overlay, modal video player (or embedded player), and smooth open/close transitions. Include thumbnail preview with subtle zoom-in effect on hover",
+      "reqIds": [
+        "REQ-41"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-optimize-landing-page-performance-and-visual-polish-including-adding-subtle-background-patterns-or-mesh-gradients-ensuring-all-images-are-optimized-implementing-lazy-loading-for-below-fold-content-adding-micro-interactions-to-all-clickable-elements-and-ensuring-perfect-mobile-responsiveness-with-touch-optimized-interaction-areas",
+      "title": "Optimize landing page performance and visual polish including adding subtle background patterns or mesh gradients, ensuring all images are optimized, implementing lazy loading for below-fold content, adding micro-interactions to all clickable elements, and ensuring perfect mobile responsiveness with touch-optimized interaction areas",
+      "reqIds": [
+        "REQ-42"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-render-generated-hero-background-feature-icons-and-testimonial-avatars-as-static-assets-from-frontend-public-assets-generated-directory-on-the-landing-page-ensuring-proper-image-loading-fallback-states-and-responsive-sizing",
+      "title": "Render generated hero background, feature icons, and testimonial avatars as static assets from frontend/public/assets/generated directory on the landing page, ensuring proper image loading, fallback states, and responsive sizing",
+      "reqIds": [
+        "REQ-43"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-post-registration-navigation-flow-to-ensure-users-are-properly-redirected-to-their-role-specific-dashboard-after-completing-registration-verify-that-the-registration-mutation-correctly-stores-user-data-and-role-information-in-the-backend-and-that-the-authentication-state-updates-to-reflect-the-newly-registered-user",
+      "title": "Fix post-registration navigation flow to ensure users are properly redirected to their role-specific dashboard after completing registration. Verify that the registration mutation correctly stores user data and role information in the backend, and that the authentication state updates to reflect the newly registered user.",
+      "reqIds": [
+        "REQ-44"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-enable-participant-plan-upload-functionality-by-connecting-the-planuploadpage-form-submission-to-the-backend-implement-proper-file-handling-validation-and-storage-using-the-existing-externalblob-system-display-upload-progress-and-success-error-states-with-appropriate-user-feedback",
+      "title": "Enable participant plan upload functionality by connecting the PlanUploadPage form submission to the backend. Implement proper file handling, validation, and storage using the existing ExternalBlob system. Display upload progress and success/error states with appropriate user feedback.",
+      "reqIds": [
+        "REQ-45"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-connect-provider-search-functionality-to-the-backend-by-implementing-queries-that-filter-providers-based-on-service-type-location-and-search-keywords-display-actual-provider-data-from-the-backend-in-the-providerspage-grid-instead-of-placeholder-data",
+      "title": "Connect provider search functionality to the backend by implementing queries that filter providers based on service type, location, and search keywords. Display actual provider data from the backend in the ProvidersPage grid instead of placeholder data.",
+      "reqIds": [
+        "REQ-47"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-ai-powered-provider-matching-algorithm-in-the-backend-that-analyzes-participant-needs-from-their-plan-data-and-recommends-relevant-service-providers-based-on-required-services-budget-categories-location-proximity-provider-ratings-and-availability-surface-these-recommendations-in-the-providers-search-interface",
+      "title": "Implement AI-powered provider matching algorithm in the backend that analyzes participant needs from their plan data and recommends relevant service providers based on required services, budget categories, location proximity, provider ratings, and availability. Surface these recommendations in the providers search interface.",
+      "reqIds": [
+        "REQ-48"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-enable-booking-functionality-by-connecting-the-booking-request-submission-to-the-backend-allow-participants-to-select-available-time-slots-from-provider-calendars-and-submit-booking-requests-store-booking-records-with-pending-status-and-notify-providers-of-new-requests",
+      "title": "Enable booking functionality by connecting the booking request submission to the backend. Allow participants to select available time slots from provider calendars and submit booking requests. Store booking records with pending status and notify providers of new requests.",
+      "reqIds": [
+        "REQ-49"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-connect-participant-dashboard-widgets-to-backend-data-sources-including-budgetsummarycard-showing-real-budget-allocation-and-spending-from-the-user-s-plan-goalprogresscard-displaying-actual-goals-and-progress-tracking-and-upcomingbookingscard-showing-confirmed-appointments-replace-placeholder-data-with-live-queries",
+      "title": "Connect participant dashboard widgets to backend data sources including BudgetSummaryCard showing real budget allocation and spending from the user's plan, GoalProgressCard displaying actual goals and progress tracking, and UpcomingBookingsCard showing confirmed appointments. Replace placeholder data with live queries.",
+      "reqIds": [
+        "REQ-50"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-invoice-submission-workflow-for-service-providers-by-connecting-the-invoice-creation-form-to-the-backend-allow-providers-to-create-line-items-specify-service-details-and-costs-attach-invoices-to-participants-and-plans-and-submit-for-approval-display-submitted-invoices-in-provider-dashboard",
+      "title": "Implement invoice submission workflow for service providers by connecting the invoice creation form to the backend. Allow providers to create line items, specify service details and costs, attach invoices to participants and plans, and submit for approval. Display submitted invoices in provider dashboard.",
+      "reqIds": [
+        "REQ-51"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-enable-plan-manager-invoice-review-and-approval-workflow-by-displaying-pending-invoices-in-the-plan-manager-dashboard-implement-approve-reject-actions-that-update-invoice-status-and-trigger-budget-updates-add-fraud-detection-alerts-that-flag-suspicious-patterns-in-invoice-submissions",
+      "title": "Enable plan manager invoice review and approval workflow by displaying pending invoices in the plan manager dashboard. Implement approve/reject actions that update invoice status and trigger budget updates. Add fraud detection alerts that flag suspicious patterns in invoice submissions.",
+      "reqIds": [
+        "REQ-52"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-connect-guardian-dashboard-to-backend-data-showing-all-managed-participants-their-budget-summaries-upcoming-activities-and-action-items-requiring-attention-implement-multi-participant-view-with-ability-to-switch-between-different-participants-under-guardianship",
+      "title": "Connect guardian dashboard to backend data showing all managed participants, their budget summaries, upcoming activities, and action items requiring attention. Implement multi-participant view with ability to switch between different participants under guardianship.",
+      "reqIds": [
+        "REQ-53"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-elevate-the-visual-design-quality-to-professional-standard-by-refining-typography-hierarchy-with-consistent-heading-scales-optimizing-spacing-and-layout-rhythm-using-a-harmonious-8px-grid-system-enhancing-color-depth-with-subtle-gradients-and-layering-adding-sophisticated-micro-interactions-on-hover-states-and-ensuring-visual-polish-across-all-interface-elements-with-professional-grade-shadows-borders-and-transitions",
+      "title": "Elevate the visual design quality to professional standard by refining typography hierarchy with consistent heading scales, optimizing spacing and layout rhythm using a harmonious 8px grid system, enhancing color depth with subtle gradients and layering, adding sophisticated micro-interactions on hover states, and ensuring visual polish across all interface elements with professional-grade shadows, borders, and transitions.",
+      "reqIds": [
+        "REQ-54"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-enhance-dashboard-card-designs-across-all-role-dashboards-with-elevated-visual-treatment-including-refined-card-shadows-with-multiple-layers-for-depth-subtle-gradient-backgrounds-or-accent-borders-improved-icon-styling-with-consistent-sizing-and-spacing-better-data-visualization-with-enhanced-progress-bars-and-stat-displays-and-polished-hover-states-that-provide-clear-interactive-feedback",
+      "title": "Enhance dashboard card designs across all role dashboards with elevated visual treatment including refined card shadows with multiple layers for depth, subtle gradient backgrounds or accent borders, improved icon styling with consistent sizing and spacing, better data visualization with enhanced progress bars and stat displays, and polished hover states that provide clear interactive feedback.",
+      "reqIds": [
+        "REQ-55"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-refine-form-design-across-registration-plan-upload-and-provider-search-interfaces-with-professional-input-styling-including-refined-borders-and-focus-states-improved-label-and-helper-text-presentation-better-error-state-styling-with-clear-visual-hierarchy-enhanced-button-designs-with-multiple-variants-primary-secondary-outline-and-polished-form-validation-feedback-with-smooth-animations",
+      "title": "Refine form design across registration, plan upload, and provider search interfaces with professional input styling including refined borders and focus states, improved label and helper text presentation, better error state styling with clear visual hierarchy, enhanced button designs with multiple variants (primary, secondary, outline), and polished form validation feedback with smooth animations.",
+      "reqIds": [
+        "REQ-56"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-polish-navigation-header-design-with-refined-glassmorphism-effect-improved-logo-presentation-enhanced-menu-item-styling-with-better-active-states-refined-user-profile-section-with-improved-avatar-and-role-display-and-smooth-dropdown-menus-or-modals-for-additional-navigation-options",
+      "title": "Polish navigation header design with refined glassmorphism effect, improved logo presentation, enhanced menu item styling with better active states, refined user profile section with improved avatar and role display, and smooth dropdown menus or modals for additional navigation options.",
+      "reqIds": [
+        "REQ-57"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-display-ai-budget-validation-results-throughout-the-user-interface-including-automatic-budget-checks-on-the-invoice-approval-workflow-real-time-budget-warnings-on-booking-forms-when-approaching-limits-budget-health-indicators-on-participant-and-plan-manager-dashboards-and-detailed-validation-explanations-when-transactions-are-flagged-or-rejected",
+      "title": "Display AI budget validation results throughout the user interface including automatic budget checks on the invoice approval workflow, real-time budget warnings on booking forms when approaching limits, budget health indicators on participant and plan manager dashboards, and detailed validation explanations when transactions are flagged or rejected.",
+      "reqIds": [
+        "REQ-62"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-ai-agent-configuration-and-monitoring-dashboard-for-administrators-to-review-ai-agent-performance-metrics-including-validation-accuracy-rates-false-positive-negative-rates-processing-times-and-confidence-scores-allow-administrators-to-adjust-validation-thresholds-and-rules-based-on-performance-data",
+      "title": "Create AI agent configuration and monitoring dashboard for administrators to review AI agent performance metrics including validation accuracy rates, false positive/negative rates, processing times, and confidence scores. Allow administrators to adjust validation thresholds and rules based on performance data.",
+      "reqIds": [
+        "REQ-64"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-resolve-all-typescript-compilation-errors-in-the-frontend-codebase-by-fixing-type-mismatches-ensuring-all-imports-are-correctly-resolved-adding-missing-type-definitions-for-props-and-state-and-verifying-that-all-react-query-hooks-have-proper-return-types-and-error-handling",
+      "title": "Resolve all TypeScript compilation errors in the frontend codebase by fixing type mismatches, ensuring all imports are correctly resolved, adding missing type definitions for props and state, and verifying that all React Query hooks have proper return types and error handling",
+      "reqIds": [
+        "REQ-65"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-all-broken-imports-and-module-resolution-issues-by-ensuring-all-component-paths-are-correct-all-hook-imports-point-to-existing-files-all-utility-function-imports-are-valid-and-all-third-party-dependencies-are-properly-installed-and-configured-in-package-json",
+      "title": "Fix all broken imports and module resolution issues by ensuring all component paths are correct, all hook imports point to existing files, all utility function imports are valid, and all third-party dependencies are properly installed and configured in package.json",
+      "reqIds": [
+        "REQ-66"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-verify-react-router-configuration-is-properly-set-up-with-all-route-definitions-matching-the-page-components-all-role-based-route-guards-are-functioning-correctly-navigation-between-pages-works-smoothly-and-url-parameters-are-correctly-parsed-and-utilized",
+      "title": "Verify React Router configuration is properly set up with all route definitions matching the page components, all role-based route guards are functioning correctly, navigation between pages works smoothly, and URL parameters are correctly parsed and utilized",
+      "reqIds": [
+        "REQ-68"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-complete-the-internet-identity-authentication-integration-by-ensuring-the-login-flow-redirects-correctly-after-authentication-the-actor-hook-receives-the-authenticated-identity-all-protected-routes-check-authentication-status-and-logout-properly-clears-authentication-state-and-redirects-to-the-landing-page",
+      "title": "Complete the Internet Identity authentication integration by ensuring the login flow redirects correctly after authentication, the actor hook receives the authenticated identity, all protected routes check authentication status, and logout properly clears authentication state and redirects to the landing page",
+      "reqIds": [
+        "REQ-69"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-test-and-verify-the-complete-user-onboarding-flow-from-landing-page-through-role-selection-registration-onboarding-tour-and-final-redirect-to-the-appropriate-role-specific-dashboard-ensuring-each-step-saves-data-correctly-and-navigation-progresses-smoothly-without-errors",
+      "title": "Test and verify the complete user onboarding flow from landing page through role selection, registration, onboarding tour, and final redirect to the appropriate role-specific dashboard, ensuring each step saves data correctly and navigation progresses smoothly without errors",
+      "reqIds": [
+        "REQ-70"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-verify-the-plan-upload-functionality-works-end-to-end-by-testing-pdf-file-selection-file-validation-size-type-upload-progress-tracking-backend-storage-using-externalblob-success-confirmation-display-and-proper-error-handling-for-failed-uploads-or-invalid-files",
+      "title": "Verify the plan upload functionality works end-to-end by testing PDF file selection, file validation (size, type), upload progress tracking, backend storage using ExternalBlob, success confirmation display, and proper error handling for failed uploads or invalid files",
+      "reqIds": [
+        "REQ-72"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-test-the-provider-search-and-booking-workflow-by-verifying-the-search-filters-work-correctly-provider-cards-display-accurate-data-from-backend-clicking-book-now-navigates-to-booking-page-with-pre-filled-provider-information-booking-form-validates-all-required-fields-and-submission-creates-a-booking-record-with-pending-status",
+      "title": "Test the provider search and booking workflow by verifying the search filters work correctly, provider cards display accurate data from backend, clicking 'Book Now' navigates to booking page with pre-filled provider information, booking form validates all required fields, and submission creates a booking record with pending status",
+      "reqIds": [
+        "REQ-73"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-verify-the-invoice-workflow-by-testing-provider-invoice-creation-form-line-item-addition-and-calculation-invoice-submission-to-backend-display-of-pending-invoices-in-provider-dashboard-plan-manager-invoice-review-interface-approve-reject-actions-that-update-invoice-status-and-budget-updates-after-invoice-approval",
+      "title": "Verify the invoice workflow by testing provider invoice creation form, line item addition and calculation, invoice submission to backend, display of pending invoices in provider dashboard, plan manager invoice review interface, approve/reject actions that update invoice status, and budget updates after invoice approval",
+      "reqIds": [
+        "REQ-74"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-optimize-mobile-responsiveness-across-all-pages-by-testing-on-various-screen-sizes-ensuring-touch-targets-meet-minimum-44x44px-size-requirements-verifying-mobile-navigation-menu-functions-correctly-confirming-all-forms-are-usable-on-mobile-devices-and-ensuring-all-dashboard-cards-stack-properly-on-narrow-screens",
+      "title": "Optimize mobile responsiveness across all pages by testing on various screen sizes, ensuring touch targets meet minimum 44x44px size requirements, verifying mobile navigation menu functions correctly, confirming all forms are usable on mobile devices, and ensuring all dashboard cards stack properly on narrow screens",
+      "reqIds": [
+        "REQ-76"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-refine-hero-section-typography-with-premium-font-hierarchy-by-upgrading-title-to-display-level-typography-5rem-on-desktop-3rem-on-mobile-adding-elegant-letter-spacing-adjustments-0-02em-for-headlines-implementing-smooth-gradient-text-animation-with-flowing-color-transitions-and-adding-subtle-text-shadows-for-depth-0-2px-20px-rgba-13-115-119-0-3",
+      "title": "Refine hero section typography with premium font hierarchy by upgrading title to display-level typography (5rem on desktop, 3rem on mobile), adding elegant letter-spacing adjustments (-0.02em for headlines), implementing smooth gradient text animation with flowing color transitions, and adding subtle text shadows for depth (0 2px 20px rgba(13, 115, 119, 0.3))",
+      "reqIds": [
+        "REQ-78"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-enhance-hero-section-cta-button-with-premium-design-treatment-including-elevated-glassmorphism-effect-backdrop-blur-md-with-rgba-overlay-sophisticated-multi-layer-shadow-system-0-4px-14px-0-rgba-13-115-119-0-39-0-8px-28px-0-rgba-13-115-119-0-2-smooth-scale-and-glow-animation-on-hover-scale-1-08-with-expanding-shadow-and-refined-typography-with-medium-font-weight-and-increased-letter-spacing-0-05em",
+      "title": "Enhance hero section CTA button with premium design treatment including elevated glassmorphism effect (backdrop-blur-md with rgba overlay), sophisticated multi-layer shadow system (0 4px 14px 0 rgba(13, 115, 119, 0.39), 0 8px 28px 0 rgba(13, 115, 119, 0.2)), smooth scale and glow animation on hover (scale 1.08 with expanding shadow), and refined typography with medium font weight and increased letter-spacing (0.05em)",
+      "reqIds": [
+        "REQ-79"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-sophisticated-background-enhancements-to-hero-section-including-animated-gradient-mesh-with-multiple-color-stops-3-5-stops-transitioning-between-0d7377-1a1a2e-00b894-16697a-subtle-animated-noise-texture-overlay-for-depth-radial-gradient-vignette-effect-darkening-edges-and-ambient-light-orbs-with-slow-floating-animation-using-css-keyframes",
+      "title": "Add sophisticated background enhancements to hero section including animated gradient mesh with multiple color stops (3-5 stops transitioning between #0d7377, #1a1a2e, #00b894, #16697a), subtle animated noise texture overlay for depth, radial gradient vignette effect darkening edges, and ambient light orbs with slow floating animation using CSS keyframes",
+      "reqIds": [
+        "REQ-80"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-upgrade-feature-cards-section-with-premium-card-design-including-refined-card-padding-40px-on-desktop-32px-on-mobile-sophisticated-border-treatment-with-gradient-borders-2px-gradient-from-rgba-13-115-119-0-5-to-transparent-enhanced-icon-containers-with-animated-gradient-backgrounds-and-subtle-pulse-animations-improved-typography-hierarchy-with-poppins-font-for-headings-and-inter-for-body-and-elevated-hover-effects-with-smooth-3d-transforms-translatez-simulation-via-scale-and-shadow",
+      "title": "Upgrade feature cards section with premium card design including refined card padding (40px on desktop, 32px on mobile), sophisticated border treatment with gradient borders (2px gradient from rgba(13, 115, 119, 0.5) to transparent), enhanced icon containers with animated gradient backgrounds and subtle pulse animations, improved typography hierarchy with Poppins font for headings and Inter for body, and elevated hover effects with smooth 3D transforms (translateZ simulation via scale and shadow)",
+      "reqIds": [
+        "REQ-81"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-enhance-testimonials-carousel-with-premium-styling-including-refined-testimonial-cards-with-subtle-backdrop-blur-backdrop-filter-blur-8px-elegant-quotation-mark-graphics-large-stylized-quotes-in-teal-with-low-opacity-improved-avatar-presentation-with-gradient-ring-borders-3px-sophisticated-star-rating-display-with-filled-half-filled-states-and-golden-color-ffc107-and-smooth-carousel-transitions-with-fade-and-slide-combined-effects",
+      "title": "Enhance testimonials carousel with premium styling including refined testimonial cards with subtle backdrop blur (backdrop-filter: blur(8px)), elegant quotation mark graphics (large stylized quotes in teal with low opacity), improved avatar presentation with gradient ring borders (3px), sophisticated star rating display with filled/half-filled states and golden color (#ffc107), and smooth carousel transitions with fade and slide combined effects",
+      "reqIds": [
+        "REQ-82"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-refine-trust-indicators-section-with-premium-statistics-display-including-animated-counting-numbers-with-elegant-easing-curves-cubic-bezier-0-4-0-0-2-1-sophisticated-icon-backgrounds-with-animated-gradient-fills-improved-spacing-and-alignment-using-precise-grid-layout-enhanced-typography-with-tabular-numbers-for-consistent-width-during-counting-and-subtle-entrance-animations-that-trigger-on-scroll-into-view-with-staggered-timing-0-1s-delay-between-each-stat",
+      "title": "Refine trust indicators section with premium statistics display including animated counting numbers with elegant easing curves (cubic-bezier(0.4, 0, 0.2, 1)), sophisticated icon backgrounds with animated gradient fills, improved spacing and alignment using precise grid layout, enhanced typography with tabular numbers for consistent width during counting, and subtle entrance animations that trigger on scroll into view with staggered timing (0.1s delay between each stat)",
+      "reqIds": [
+        "REQ-83"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-premium-micro-interactions-throughout-landing-page-including-smooth-cursor-follower-effects-on-interactive-elements-elegant-ripple-animations-on-button-clicks-with-proper-timing-300ms-duration-refined-scroll-progress-indicator-at-top-of-page-with-gradient-fill-matching-brand-colors-hover-states-on-all-text-links-with-underline-slide-in-animation-from-left-and-attention-grabbing-subtle-animation-on-cta-elements-gentle-pulse-every-3-seconds",
+      "title": "Add premium micro-interactions throughout landing page including smooth cursor follower effects on interactive elements, elegant ripple animations on button clicks with proper timing (300ms duration), refined scroll progress indicator at top of page with gradient fill matching brand colors, hover states on all text links with underline slide-in animation from left, and attention-grabbing subtle animation on CTA elements (gentle pulse every 3 seconds)",
+      "reqIds": [
+        "REQ-84"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-enhance-spacing-and-layout-rhythm-across-landing-page-using-refined-8px-grid-system-with-increased-whitespace-between-sections-120px-on-desktop-80px-on-mobile-improved-section-padding-80px-vertical-responsive-better-visual-hierarchy-through-strategic-use-of-negative-space-refined-container-widths-for-optimal-reading-line-length-max-70ch-for-text-blocks-and-balanced-asymmetric-layouts-that-create-visual-interest-while-maintaining-harmony",
+      "title": "Enhance spacing and layout rhythm across landing page using refined 8px grid system with increased whitespace between sections (120px on desktop, 80px on mobile), improved section padding (80px vertical, responsive), better visual hierarchy through strategic use of negative space, refined container widths for optimal reading line length (max 70ch for text blocks), and balanced asymmetric layouts that create visual interest while maintaining harmony",
+      "reqIds": [
+        "REQ-85"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-polish-all-interactive-elements-with-premium-animation-timing-using-professional-spring-physics-use-css-cubic-bezier-or-transition-all-0-4s-cubic-bezier-0-34-1-56-0-64-1-for-bouncy-effects-ensure-all-hover-states-have-smooth-entry-and-exit-animations-with-no-jarring-transitions-add-subtle-loading-states-with-skeleton-screens-that-have-shimmer-effects-implement-smooth-page-entrance-animation-that-fades-and-slides-content-in-from-below-on-initial-load-and-ensure-all-animations-respect-prefers-reduced-motion-preference",
+      "title": "Polish all interactive elements with premium animation timing using professional spring physics (use CSS cubic-bezier or transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) for bouncy effects), ensure all hover states have smooth entry and exit animations with no jarring transitions, add subtle loading states with skeleton screens that have shimmer effects, implement smooth page entrance animation that fades and slides content in from below on initial load, and ensure all animations respect prefers-reduced-motion preference",
+      "reqIds": [
+        "REQ-86"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-sophisticated-visual-depth-effects-throughout-landing-page-including-layered-shadows-with-multiple-blur-radii-0-1px-3px-rgba-0-0-0-0-12-0-1px-2px-rgba-0-0-0-0-24-for-cards-subtle-parallax-scrolling-on-background-elements-at-different-speeds-creating-depth-perception-frosted-glass-effects-on-overlapping-ui-elements-using-backdrop-filter-refined-borders-with-subtle-gradient-treatments-instead-of-solid-colors-and-strategic-use-of-elevation-to-establish-clear-visual-hierarchy-between-foreground-and-background-elements",
+      "title": "Add sophisticated visual depth effects throughout landing page including layered shadows with multiple blur radii (0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24) for cards), subtle parallax scrolling on background elements at different speeds creating depth perception, frosted glass effects on overlapping UI elements using backdrop-filter, refined borders with subtle gradient treatments instead of solid colors, and strategic use of elevation to establish clear visual hierarchy between foreground and background elements",
+      "reqIds": [
+        "REQ-87"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-magnetic-cursor-interaction-effect-on-the-floatingparticles-component-in-the-hero-section-where-floating-particles-smoothly-move-toward-the-cursor-position-when-the-mouse-hovers-nearby-creating-a-magnet-like-attraction-effect-with-smooth-easing-transitions-and-configurable-attraction-radius",
+      "title": "Implement magnetic cursor interaction effect on the FloatingParticles component in the hero section where floating particles smoothly move toward the cursor position when the mouse hovers nearby, creating a magnet-like attraction effect with smooth easing transitions and configurable attraction radius",
+      "reqIds": [
+        "REQ-88"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-modern-visually-appealing-footer-component-for-the-landing-page-with-premium-design-treatment-including-multi-column-layout-brand-company-info-quick-links-legal-links-contact-social-refined-typography-hierarchy-consistent-spacing-using-8px-grid-system-teal-navy-color-scheme-matching-the-design-system-subtle-gradient-or-texture-background-and-responsive-mobile-stacking",
+      "title": "Create a modern, visually appealing footer component for the landing page with premium design treatment including multi-column layout (brand/company info, quick links, legal links, contact/social), refined typography hierarchy, consistent spacing using 8px grid system, teal/navy color scheme matching the design system, subtle gradient or texture background, and responsive mobile stacking",
+      "reqIds": [
+        "REQ-89"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-the-star-element-from-the-hero-section-of-the-landing-page",
+      "title": "Remove the star element from the hero section of the landing page",
+      "reqIds": [
+        "REQ-90"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-enhance-the-floatingparticles-component-to-create-an-exciting-animated-effect-where-particles-smoothly-follow-and-move-with-the-mouse-cursor-position-when-hovering-over-the-hero-section-creating-dynamic-particle-trails-or-clustering-effects-that-respond-to-mouse-movement-in-real-time",
+      "title": "Enhance the FloatingParticles component to create an exciting animated effect where particles smoothly follow and move with the mouse cursor position when hovering over the hero section, creating dynamic particle trails or clustering effects that respond to mouse movement in real-time",
+      "reqIds": [
+        "REQ-91"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-reduce-the-vertical-spacing-between-the-trustindicators-section-and-the-feature-cards-section-everything-you-need-in-one-place-on-the-landing-page-from-current-excessive-whitespace-to-a-professional-spacing-value-of-80px-on-desktop-and-48px-on-mobile-ensuring-visual-continuity-while-maintaining-breathing-room",
+      "title": "Reduce the vertical spacing between the TrustIndicators section and the feature cards section ('Everything You Need in One Place') on the landing page from current excessive whitespace to a professional spacing value of 80px on desktop and 48px on mobile, ensuring visual continuity while maintaining breathing room",
+      "reqIds": [
+        "REQ-92"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-professional-connecting-visual-element-between-the-trustindicators-section-and-the-feature-cards-section-such-as-a-subtle-gradient-fade-decorative-divider-with-brand-accent-color-or-animated-transition-element-that-creates-visual-flow-and-enhances-the-premium-landing-page-aesthetic",
+      "title": "Add a professional connecting visual element between the TrustIndicators section and the feature cards section, such as a subtle gradient fade, decorative divider with brand accent color, or animated transition element that creates visual flow and enhances the premium landing page aesthetic",
+      "reqIds": [
+        "REQ-93"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-audit-all-section-spacing-across-the-entire-landing-page-to-ensure-professional-consistent-vertical-rhythm-using-the-8px-grid-system-with-optimal-whitespace-that-creates-visual-breathing-room-without-excessive-gaps-and-verify-that-the-landing-page-maintains-best-in-class-professional-polish-throughout",
+      "title": "Audit all section spacing across the entire landing page to ensure professional, consistent vertical rhythm using the 8px grid system, with optimal whitespace that creates visual breathing room without excessive gaps, and verify that the landing page maintains best-in-class professional polish throughout",
+      "reqIds": [
+        "REQ-94"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-scroll-functionality-on-the-onboarding-tour-page-that-occurs-after-clicking-the-get-started-button-on-the-landing-page-diagnose-and-resolve-the-issue-preventing-vertical-scrolling-on-the-welcomescreen-component-and-throughout-the-onboardingflow-ensure-the-page-content-including-welcome-to-nexy-myndis-title-subtitle-feature-grid-with-4-items-manage-your-plan-find-providers-track-goals-stay-compliant-and-skip-tour-button-is-fully-scrollable-when-content-exceeds-viewport-height",
+      "title": "Fix the scroll functionality on the onboarding tour page that occurs after clicking the 'Get Started' button on the landing page. Diagnose and resolve the issue preventing vertical scrolling on the WelcomeScreen component and throughout the OnboardingFlow. Ensure the page content (including 'Welcome to NEXY MYNDIS' title, subtitle, feature grid with 4 items - Manage Your Plan, Find Providers, Track Goals, Stay Compliant - and Skip Tour button) is fully scrollable when content exceeds viewport height.",
+      "reqIds": [
+        "REQ-95"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-inspect-the-onboardingflow-component-frontend-src-components-onboarding-onboardingflow-tsx-and-welcomescreen-component-frontend-src-components-onboarding-welcomescreen-tsx-for-css-styles-that-may-be-preventing-scrolling-such-as-fixed-positioning-on-parent-containers-overflow-hidden-on-body-or-wrapper-elements-or-height-constraints-that-prevent-content-overflow-remove-or-adjust-these-styles-to-restore-normal-scroll-functionality",
+      "title": "Inspect the OnboardingFlow component (frontend/src/components/onboarding/OnboardingFlow.tsx) and WelcomeScreen component (frontend/src/components/onboarding/WelcomeScreen.tsx) for CSS styles that may be preventing scrolling, such as fixed positioning on parent containers, overflow:hidden on body or wrapper elements, or height constraints that prevent content overflow. Remove or adjust these styles to restore normal scroll functionality.",
+      "reqIds": [
+        "REQ-96"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-verify-that-the-app-tsx-component-and-router-configuration-do-not-inadvertently-block-scrolling-when-the-onboarding-flow-is-active-ensure-the-profilesetup-modal-and-onboardingflow-overlay-rendering-logic-allows-proper-document-scrolling-or-implements-internal-scrolling-correctly-if-using-modal-overlays",
+      "title": "Verify that the App.tsx component and router configuration do not inadvertently block scrolling when the onboarding flow is active. Ensure the ProfileSetup modal and OnboardingFlow overlay rendering logic allows proper document scrolling or implements internal scrolling correctly if using modal overlays.",
+      "reqIds": [
+        "REQ-97"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-2",
+      "summary": "Blockchain integration for identity verification, audit trails, smart contracts, and fraud prevention",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "4 role-based user interfaces (Participants, Guardians/Carers, Service Providers, Plan Managers)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Plan Management system with PDF upload, AI interpretation, and real-time budget tracking",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Provider ecosystem with AI-powered matching, smart scheduling, and automated payments",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Invoice processing with AI extraction, fraud detection, and real-time budget updates",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Evidence management with automated gathering, compliance tracking, and NDIA submission",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "WCAG 2.1 AA accessibility compliance with progressive disclosure and mobile-first responsive design",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Zero-trust security architecture with AES-256 encryption and Australian Privacy Act compliance",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "NDIS systems integration, provider networks, banking gateways, and healthcare system connections",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-16",
+      "summary": "Implement backend data models for NDIS plans including plan details (plan number, start date, end date, total budget), budget categories with allocated amounts, goals with descriptions and target dates, and plan status tracking.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-17",
+      "summary": "Implement backend data models for service providers including provider profiles (name, ABN, service types, qualifications), availability schedules, service pricing, and NDIS registration verification status.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-18",
+      "summary": "Implement backend data models for invoices including invoice details (invoice number, date, amount, status), line items with service descriptions and costs, participant and provider associations, approval workflow state, and payment tracking.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-19",
+      "summary": "Implement backend data models for evidence and compliance records including evidence documents (type, date, description), compliance checkpoints with status, audit trail entries with timestamps, and NDIA submission tracking.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-20",
+      "summary": "Implement plan upload functionality allowing participants and guardians to upload NDIS plan documents, store them securely in the backend, and display uploaded plans in the user's plan list with basic metadata extraction (plan number, date ranges if detectable from filename or initial parsing).",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-21",
+      "summary": "Create provider search and matching interface allowing participants to search providers by service type, location, availability, and specialization. Display provider profiles with ratings, services offered, and booking availability. Implement basic matching algorithm that filters providers based on participant needs and provider capabilities.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-22",
+      "summary": "Implement booking system allowing participants to request appointments with providers based on available time slots. Providers can view booking requests, accept or decline them, and manage their availability calendar. Both parties receive booking confirmations and can view upcoming appointments.",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-23",
+      "summary": "Implement invoice submission workflow for service providers to create and submit invoices with service details, line items, and amounts. Store invoices with pending status and link them to the appropriate participant and plan. Display submitted invoices in participant and plan manager dashboards for review.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-24",
+      "summary": "Implement budget tracking system that calculates and displays budget utilization in real-time. Show allocated budget by category, spent amounts from approved invoices, and remaining budget. Display budget warnings when categories approach or exceed allocation limits.",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-25",
+      "summary": "Implement goal tracking system allowing participants and guardians to view plan goals, mark progress milestones, and link evidence documents to goals. Display goal progress with visual indicators and completion percentages. Allow notes and updates to be added to goals.",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-26",
+      "summary": "Implement audit trail system that automatically logs all significant actions including user logins, plan uploads, invoice submissions, booking requests, approvals, and budget changes. Store audit entries with timestamp, user, action type, and relevant entity IDs. Display audit history to authorized users (plan managers and guardians).",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-27",
+      "summary": "Implement compliance monitoring system that tracks required compliance checkpoints for plans and generates alerts when documentation is missing or deadlines are approaching. Display compliance status dashboard showing completed vs pending requirements. Track evidence submission for NDIA reporting.",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-30",
+      "summary": "Implement progressive disclosure patterns throughout the interface to minimize cognitive load. Show essential information first with options to expand details. Use collapsible sections for complex forms, accordions for FAQ-style content, steppers for multi-step processes, and tooltips for contextual help. Ensure expanded states are clearly indicated.",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-31",
+      "summary": "Landing page with full-screen hero, gradient background, clear CTA, and professional styling",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-32",
+      "summary": "Role selection page with card-based design, hover effects, and role-specific features display",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-33",
+      "summary": "Multi-step registration flow with progress indicator, role-specific fields, and form validation",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-34",
+      "summary": "Enhanced dashboard with welcome section, stats grid, and role-specific widgets",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-35",
+      "summary": "Plan upload interface with drag-drop functionality, AI processing animation, and visual feedback",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-36",
+      "summary": "Provider search and discovery interface with advanced filtering, AI recommendations banner, and provider cards",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-37",
+      "summary": "Navigation bar with fixed positioning, glassmorphism effect, role-aware menu, and mobile responsiveness",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-38",
+      "summary": "Page transition animations and loading states with skeleton screens and spinners",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-39",
+      "summary": "Enhance landing page with best-in-class design elements including animations, interactive components, engaging visuals, and optimized user experience",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-50",
+      "summary": "Adapt architecture for Internet Computer: Motoko backend, Internet Identity auth, canister storage, manual review processes where AI was specified",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-51",
+      "summary": "Implement manual plan data entry interface for participants/guardians to input NDIS plan details (goals, budget categories, allocations, dates) replacing AI plan parsing",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-52",
+      "summary": "Implement manual invoice review workflow for plan managers with checklist-based validation replacing AI invoice analysis",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-53",
+      "summary": "Build Internet Computer canister-based file storage system for plan documents and evidence uploads replacing AWS S3",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-54",
+      "summary": "Core participant and provider dashboard implementation with all UI components from design system as priority",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-57",
+      "summary": "Ensure the backend Motoko actor compiles successfully by verifying all type definitions are correct, all function signatures match their implementations, all mixin imports are properly configured, and the actor exports all required public methods for frontend integration",
+      "reqIds": [
+        "REQ-67"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-61",
+      "summary": "Ensure all dashboard widgets (BudgetSummaryCard, GoalProgressCard, UpcomingBookingsCard, PlanOverviewCard) correctly fetch and display data from the backend using React Query hooks, handle loading states with skeleton loaders, show appropriate empty states when no data exists, and display error states with user-friendly messages",
+      "reqIds": [
+        "REQ-71"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-65",
+      "summary": "Polish all visual elements across the application by ensuring consistent spacing using the 8px grid system, verifying all text meets WCAG 2.1 AA contrast requirements (minimum 4.5:1), applying consistent hover and focus states to all interactive elements, ensuring rounded corners use the 12-24px range consistently, and verifying all shadows use the defined subtle shadow system",
+      "reqIds": [
+        "REQ-75"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-67",
+      "summary": "Enhance animation performance and polish by ensuring all transitions use GPU-accelerated properties (transform, opacity), respecting prefers-reduced-motion user preferences, implementing smooth page transitions between routes, adding loading animations that provide clear feedback without being distracting, and ensuring all micro-interactions feel responsive and natural",
+      "reqIds": [
+        "REQ-77"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-68",
+      "summary": "Enhance landing page visual design to 'best in class' standard while maintaining current teal/navy color scheme - add premium polish, sophisticated animations, refined typography, improved spacing, modern visual effects, and elevated overall aesthetic quality",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-69",
+      "summary": "Add magnetic cursor interaction to hero section floating elements where elements react to mouse position, moving toward or away from cursor as if magnetized",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-70",
+      "summary": "Create modern, visually appealing footer for landing page with consistent design system styling",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-71",
+      "summary": "Remove star element from hero section and implement interactive particle animation that follows mouse cursor movement to create an exciting, animated hero experience",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-72",
+      "summary": "Reduce excessive whitespace between trust indicators section and feature cards section on landing page, add professional spacing or connecting visual element to improve landing page polish and flow",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-73",
+      "summary": "Fix onboarding tour page scroll issue where page becomes non-scrollable and hangs after clicking 'Get Started', preventing users from viewing the full onboarding tour content",
+      "reqIds": [],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "NEXY_MYNDIS CONCIERGE",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}
