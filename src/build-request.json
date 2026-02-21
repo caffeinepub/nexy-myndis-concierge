@@ -1,48 +1,29 @@
 {
   "kind": "build_request",
-  "title": "Remove profile completion modal",
-  "priority": "normal",
+  "title": "Retry deployment",
+  "priority": "high",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Remove the profile completion modal that displays 'Complete Your Profile' with name and email fields from the application",
-      "target": "frontend",
+      "text": "Retry the deployment process that failed in the previous attempt",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-user-1"
+          "msg-user-retry"
         ],
         "quotes": [
-          "Complete Your Profile Please provide your name and email to get started",
-          "can we remove this that keeps popping up coz we dont need it"
+          "retry"
         ]
       },
       "acceptanceCriteria": [
-        "The profile setup modal no longer appears for any user",
-        "Users can access the application without being prompted to complete profile information",
-        "No popup requesting name and email is displayed"
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "text": "Remove any conditional logic that triggers the profile completion modal based on missing user profile data",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-user-1"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Application flow no longer checks for or enforces profile completion",
-        "User can navigate freely without profile setup interruptions"
+        "The deployment process is re-initiated successfully",
+        "Any deployment errors are properly logged and reported",
+        "The application is accessible after successful deployment"
       ]
     }
   ],
   "constraints": [],
-  "nonGoals": [
-    "Modifying the underlying user profile data structure in the backend",
-    "Removing the profile setup component files themselves (they may be needed for other purposes)",
-    "Changing authentication or role selection flows"
-  ],
+  "nonGoals": [],
   "imageRequirements": {
     "required": [],
     "edits": []

@@ -19,112 +19,16 @@ export const _CaffeineStorageRefillResult = IDL.Record({
   'success' : IDL.Opt(IDL.Bool),
   'topped_up_amount' : IDL.Opt(IDL.Nat),
 });
-export const TimeSlot = IDL.Record({ 'end' : IDL.Int, 'start' : IDL.Int });
-export const ServiceProvider = IDL.Record({
-  'abn' : IDL.Text,
-  'principal' : IDL.Principal,
-  'ndisVerified' : IDL.Bool,
-  'name' : IDL.Text,
-  'availability' : IDL.Vec(TimeSlot),
-  'summary' : IDL.Text,
-  'rating' : IDL.Opt(IDL.Nat),
-  'priceList' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Int)),
-  'serviceTypes' : IDL.Vec(IDL.Text),
-});
 export const UserRole = IDL.Variant({
   'admin' : IDL.Null,
   'user' : IDL.Null,
   'guest' : IDL.Null,
-});
-export const BookingStatus = IDL.Variant({
-  'cancelled' : IDL.Null,
-  'pending' : IDL.Null,
-  'confirmed' : IDL.Null,
-});
-export const Booking = IDL.Record({
-  'status' : BookingStatus,
-  'serviceType' : IDL.Text,
-  'provider' : IDL.Principal,
-  'participant' : IDL.Principal,
-  'price' : IDL.Int,
-  'timeSlot' : TimeSlot,
-});
-export const InvoiceStatus = IDL.Variant({
-  'pending' : IDL.Null,
-  'paid' : IDL.Null,
-  'approved' : IDL.Null,
-  'rejected' : IDL.Null,
-});
-export const InvoiceLineItem = IDL.Record({
-  'description' : IDL.Text,
-  'quantity' : IDL.Int,
-  'price' : IDL.Int,
-});
-export const Invoice = IDL.Record({
-  'status' : InvoiceStatus,
-  'provider' : IDL.Principal,
-  'participant' : IDL.Principal,
-  'totalAmount' : IDL.Int,
-  'number' : IDL.Text,
-  'items' : IDL.Vec(InvoiceLineItem),
-});
-export const AIAgentMetrics = IDL.Record({
-  'falseNegativeRate' : IDL.Float64,
-  'validationAccuracy' : IDL.Float64,
-  'falsePositiveRate' : IDL.Float64,
-  'averageProcessingTime' : IDL.Int,
-  'confidenceScores' : IDL.Vec(IDL.Float64),
-});
-export const Participant = IDL.Record({
-  'ndisNumber' : IDL.Text,
-  'age' : IDL.Int,
-  'name' : IDL.Text,
-  'address' : IDL.Text,
-  'primaryContact' : IDL.Text,
-  'planManager' : IDL.Principal,
-});
-export const BudgetCategory = IDL.Record({
-  'name' : IDL.Text,
-  'spent' : IDL.Int,
-  'amount' : IDL.Int,
-});
-export const PlanStatus = IDL.Variant({
-  'active' : IDL.Null,
-  'expired' : IDL.Null,
-  'pendingApproval' : IDL.Null,
-});
-export const ExternalBlob = IDL.Vec(IDL.Nat8);
-export const NDISPlan = IDL.Record({
-  'categories' : IDL.Vec(IDL.Tuple(IDL.Text, BudgetCategory)),
-  'status' : PlanStatus,
-  'endDate' : IDL.Int,
-  'participant' : IDL.Principal,
-  'planNumber' : IDL.Text,
-  'goals' : IDL.Vec(IDL.Text),
-  'document' : IDL.Opt(ExternalBlob),
-  'startDate' : IDL.Int,
-});
-export const BudgetThresholdAlert = IDL.Record({
-  'threshold' : IDL.Int,
-  'utilized' : IDL.Int,
-  'participant' : IDL.Principal,
-  'timestamp' : IDL.Int,
-  'category' : IDL.Text,
 });
 export const UserProfile = IDL.Record({
   'name' : IDL.Text,
   'role' : IDL.Text,
   'email' : IDL.Text,
 });
-export const Guardian = IDL.Record({ 'participant' : IDL.Principal });
-export const EvidenceDocument = IDL.Record({
-  'id' : IDL.Text,
-  'provider' : IDL.Principal,
-  'file' : ExternalBlob,
-  'participant' : IDL.Principal,
-  'category' : IDL.Text,
-});
-export const PlanManager = IDL.Record({ 'provider' : IDL.Principal });
 export const ApprovalStatus = IDL.Variant({
   'pending' : IDL.Null,
   'approved' : IDL.Null,
@@ -133,13 +37,6 @@ export const ApprovalStatus = IDL.Variant({
 export const UserApprovalInfo = IDL.Record({
   'status' : ApprovalStatus,
   'principal' : IDL.Principal,
-});
-export const BudgetValidationResult = IDL.Record({
-  'reasons' : IDL.Vec(IDL.Text),
-  'valid' : IDL.Bool,
-  'warnings' : IDL.Vec(IDL.Text),
-  'recommendedAdjustments' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Int)),
-  'predictedDepletionDate' : IDL.Opt(IDL.Int),
 });
 
 export const idlService = IDL.Service({
@@ -170,108 +67,20 @@ export const idlService = IDL.Service({
     ),
   '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
-  'addAvailability' : IDL.Func([IDL.Principal, IDL.Vec(TimeSlot)], [], []),
-  'addServiceProvider' : IDL.Func([ServiceProvider], [], []),
-  'approveInvoice' : IDL.Func([IDL.Principal, IDL.Text], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-  'confirmBooking' : IDL.Func([Booking], [], []),
-  'createBooking' : IDL.Func([Booking], [], []),
-  'createInvoice' : IDL.Func([Invoice], [], []),
-  'detectAnomalies' : IDL.Func([IDL.Principal], [IDL.Vec(IDL.Text)], []),
-  'getAIAgentMetrics' : IDL.Func([], [AIAgentMetrics], ['query']),
-  'getAllParticipants' : IDL.Func([], [IDL.Vec(Participant)], ['query']),
-  'getAllPlans' : IDL.Func([], [IDL.Vec(NDISPlan)], ['query']),
-  'getAllProviders' : IDL.Func([], [IDL.Vec(ServiceProvider)], ['query']),
-  'getAvailableProviders' : IDL.Func(
-      [IDL.Text],
-      [IDL.Vec(IDL.Text)],
-      ['query'],
-    ),
-  'getBudgetThresholdAlerts' : IDL.Func(
-      [IDL.Principal],
-      [IDL.Vec(BudgetThresholdAlert)],
-      ['query'],
-    ),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
-  'getGuardian' : IDL.Func([IDL.Principal], [Guardian], ['query']),
-  'getParticipant' : IDL.Func([IDL.Principal], [Participant], ['query']),
-  'getParticipantBookings' : IDL.Func(
-      [IDL.Principal],
-      [IDL.Vec(Booking)],
-      ['query'],
-    ),
-  'getParticipantEvidence' : IDL.Func(
-      [IDL.Principal],
-      [IDL.Vec(EvidenceDocument)],
-      ['query'],
-    ),
-  'getParticipantInvoices' : IDL.Func(
-      [IDL.Principal],
-      [IDL.Vec(Invoice)],
-      ['query'],
-    ),
-  'getParticipantPlans' : IDL.Func(
-      [IDL.Principal],
-      [IDL.Vec(NDISPlan)],
-      ['query'],
-    ),
-  'getPlanManager' : IDL.Func([IDL.Principal], [PlanManager], ['query']),
-  'getProvider' : IDL.Func([IDL.Principal], [ServiceProvider], ['query']),
-  'getProviderBookings' : IDL.Func(
-      [IDL.Principal],
-      [IDL.Vec(Booking)],
-      ['query'],
-    ),
-  'getProviderInvoices' : IDL.Func(
-      [IDL.Principal],
-      [IDL.Vec(Invoice)],
-      ['query'],
-    ),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
       [IDL.Opt(UserProfile)],
       ['query'],
     ),
-  'handleBudgetUtilization' : IDL.Func(
-      [IDL.Int, IDL.Principal, IDL.Text],
-      [],
-      [],
-    ),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'isCallerApproved' : IDL.Func([], [IDL.Bool], ['query']),
   'listApprovals' : IDL.Func([], [IDL.Vec(UserApprovalInfo)], ['query']),
-  'recordValidationFeedback' : IDL.Func(
-      [IDL.Principal, IDL.Text, IDL.Bool, IDL.Text],
-      [],
-      [],
-    ),
-  'registerGuardian' : IDL.Func([Guardian], [], []),
-  'registerParticipant' : IDL.Func([Participant], [], []),
-  'registerPlanManager' : IDL.Func([PlanManager], [], []),
-  'registerServiceProvider' : IDL.Func([ServiceProvider], [], []),
   'requestApproval' : IDL.Func([], [], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
-  'searchProviders' : IDL.Func([IDL.Text], [IDL.Vec(IDL.Text)], ['query']),
   'setApproval' : IDL.Func([IDL.Principal, ApprovalStatus], [], []),
-  'updateAIValidationThresholds' : IDL.Func(
-      [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Float64))],
-      [],
-      [],
-    ),
-  'updateCategorySpending' : IDL.Func(
-      [IDL.Principal, IDL.Text, IDL.Int],
-      [],
-      [],
-    ),
-  'uploadEvidence' : IDL.Func([EvidenceDocument], [], []),
-  'uploadPlan' : IDL.Func([ExternalBlob], [], []),
-  'validateBudgetTransaction' : IDL.Func(
-      [IDL.Principal, IDL.Text, IDL.Int],
-      [BudgetValidationResult],
-      [],
-    ),
-  'validateCompliance' : IDL.Func([IDL.Principal, IDL.Text], [IDL.Bool], []),
 });
 
 export const idlInitArgs = [];
@@ -288,112 +97,16 @@ export const idlFactory = ({ IDL }) => {
     'success' : IDL.Opt(IDL.Bool),
     'topped_up_amount' : IDL.Opt(IDL.Nat),
   });
-  const TimeSlot = IDL.Record({ 'end' : IDL.Int, 'start' : IDL.Int });
-  const ServiceProvider = IDL.Record({
-    'abn' : IDL.Text,
-    'principal' : IDL.Principal,
-    'ndisVerified' : IDL.Bool,
-    'name' : IDL.Text,
-    'availability' : IDL.Vec(TimeSlot),
-    'summary' : IDL.Text,
-    'rating' : IDL.Opt(IDL.Nat),
-    'priceList' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Int)),
-    'serviceTypes' : IDL.Vec(IDL.Text),
-  });
   const UserRole = IDL.Variant({
     'admin' : IDL.Null,
     'user' : IDL.Null,
     'guest' : IDL.Null,
-  });
-  const BookingStatus = IDL.Variant({
-    'cancelled' : IDL.Null,
-    'pending' : IDL.Null,
-    'confirmed' : IDL.Null,
-  });
-  const Booking = IDL.Record({
-    'status' : BookingStatus,
-    'serviceType' : IDL.Text,
-    'provider' : IDL.Principal,
-    'participant' : IDL.Principal,
-    'price' : IDL.Int,
-    'timeSlot' : TimeSlot,
-  });
-  const InvoiceStatus = IDL.Variant({
-    'pending' : IDL.Null,
-    'paid' : IDL.Null,
-    'approved' : IDL.Null,
-    'rejected' : IDL.Null,
-  });
-  const InvoiceLineItem = IDL.Record({
-    'description' : IDL.Text,
-    'quantity' : IDL.Int,
-    'price' : IDL.Int,
-  });
-  const Invoice = IDL.Record({
-    'status' : InvoiceStatus,
-    'provider' : IDL.Principal,
-    'participant' : IDL.Principal,
-    'totalAmount' : IDL.Int,
-    'number' : IDL.Text,
-    'items' : IDL.Vec(InvoiceLineItem),
-  });
-  const AIAgentMetrics = IDL.Record({
-    'falseNegativeRate' : IDL.Float64,
-    'validationAccuracy' : IDL.Float64,
-    'falsePositiveRate' : IDL.Float64,
-    'averageProcessingTime' : IDL.Int,
-    'confidenceScores' : IDL.Vec(IDL.Float64),
-  });
-  const Participant = IDL.Record({
-    'ndisNumber' : IDL.Text,
-    'age' : IDL.Int,
-    'name' : IDL.Text,
-    'address' : IDL.Text,
-    'primaryContact' : IDL.Text,
-    'planManager' : IDL.Principal,
-  });
-  const BudgetCategory = IDL.Record({
-    'name' : IDL.Text,
-    'spent' : IDL.Int,
-    'amount' : IDL.Int,
-  });
-  const PlanStatus = IDL.Variant({
-    'active' : IDL.Null,
-    'expired' : IDL.Null,
-    'pendingApproval' : IDL.Null,
-  });
-  const ExternalBlob = IDL.Vec(IDL.Nat8);
-  const NDISPlan = IDL.Record({
-    'categories' : IDL.Vec(IDL.Tuple(IDL.Text, BudgetCategory)),
-    'status' : PlanStatus,
-    'endDate' : IDL.Int,
-    'participant' : IDL.Principal,
-    'planNumber' : IDL.Text,
-    'goals' : IDL.Vec(IDL.Text),
-    'document' : IDL.Opt(ExternalBlob),
-    'startDate' : IDL.Int,
-  });
-  const BudgetThresholdAlert = IDL.Record({
-    'threshold' : IDL.Int,
-    'utilized' : IDL.Int,
-    'participant' : IDL.Principal,
-    'timestamp' : IDL.Int,
-    'category' : IDL.Text,
   });
   const UserProfile = IDL.Record({
     'name' : IDL.Text,
     'role' : IDL.Text,
     'email' : IDL.Text,
   });
-  const Guardian = IDL.Record({ 'participant' : IDL.Principal });
-  const EvidenceDocument = IDL.Record({
-    'id' : IDL.Text,
-    'provider' : IDL.Principal,
-    'file' : ExternalBlob,
-    'participant' : IDL.Principal,
-    'category' : IDL.Text,
-  });
-  const PlanManager = IDL.Record({ 'provider' : IDL.Principal });
   const ApprovalStatus = IDL.Variant({
     'pending' : IDL.Null,
     'approved' : IDL.Null,
@@ -402,13 +115,6 @@ export const idlFactory = ({ IDL }) => {
   const UserApprovalInfo = IDL.Record({
     'status' : ApprovalStatus,
     'principal' : IDL.Principal,
-  });
-  const BudgetValidationResult = IDL.Record({
-    'reasons' : IDL.Vec(IDL.Text),
-    'valid' : IDL.Bool,
-    'warnings' : IDL.Vec(IDL.Text),
-    'recommendedAdjustments' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Int)),
-    'predictedDepletionDate' : IDL.Opt(IDL.Int),
   });
   
   return IDL.Service({
@@ -439,108 +145,20 @@ export const idlFactory = ({ IDL }) => {
       ),
     '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
-    'addAvailability' : IDL.Func([IDL.Principal, IDL.Vec(TimeSlot)], [], []),
-    'addServiceProvider' : IDL.Func([ServiceProvider], [], []),
-    'approveInvoice' : IDL.Func([IDL.Principal, IDL.Text], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-    'confirmBooking' : IDL.Func([Booking], [], []),
-    'createBooking' : IDL.Func([Booking], [], []),
-    'createInvoice' : IDL.Func([Invoice], [], []),
-    'detectAnomalies' : IDL.Func([IDL.Principal], [IDL.Vec(IDL.Text)], []),
-    'getAIAgentMetrics' : IDL.Func([], [AIAgentMetrics], ['query']),
-    'getAllParticipants' : IDL.Func([], [IDL.Vec(Participant)], ['query']),
-    'getAllPlans' : IDL.Func([], [IDL.Vec(NDISPlan)], ['query']),
-    'getAllProviders' : IDL.Func([], [IDL.Vec(ServiceProvider)], ['query']),
-    'getAvailableProviders' : IDL.Func(
-        [IDL.Text],
-        [IDL.Vec(IDL.Text)],
-        ['query'],
-      ),
-    'getBudgetThresholdAlerts' : IDL.Func(
-        [IDL.Principal],
-        [IDL.Vec(BudgetThresholdAlert)],
-        ['query'],
-      ),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
-    'getGuardian' : IDL.Func([IDL.Principal], [Guardian], ['query']),
-    'getParticipant' : IDL.Func([IDL.Principal], [Participant], ['query']),
-    'getParticipantBookings' : IDL.Func(
-        [IDL.Principal],
-        [IDL.Vec(Booking)],
-        ['query'],
-      ),
-    'getParticipantEvidence' : IDL.Func(
-        [IDL.Principal],
-        [IDL.Vec(EvidenceDocument)],
-        ['query'],
-      ),
-    'getParticipantInvoices' : IDL.Func(
-        [IDL.Principal],
-        [IDL.Vec(Invoice)],
-        ['query'],
-      ),
-    'getParticipantPlans' : IDL.Func(
-        [IDL.Principal],
-        [IDL.Vec(NDISPlan)],
-        ['query'],
-      ),
-    'getPlanManager' : IDL.Func([IDL.Principal], [PlanManager], ['query']),
-    'getProvider' : IDL.Func([IDL.Principal], [ServiceProvider], ['query']),
-    'getProviderBookings' : IDL.Func(
-        [IDL.Principal],
-        [IDL.Vec(Booking)],
-        ['query'],
-      ),
-    'getProviderInvoices' : IDL.Func(
-        [IDL.Principal],
-        [IDL.Vec(Invoice)],
-        ['query'],
-      ),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],
         [IDL.Opt(UserProfile)],
         ['query'],
       ),
-    'handleBudgetUtilization' : IDL.Func(
-        [IDL.Int, IDL.Principal, IDL.Text],
-        [],
-        [],
-      ),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'isCallerApproved' : IDL.Func([], [IDL.Bool], ['query']),
     'listApprovals' : IDL.Func([], [IDL.Vec(UserApprovalInfo)], ['query']),
-    'recordValidationFeedback' : IDL.Func(
-        [IDL.Principal, IDL.Text, IDL.Bool, IDL.Text],
-        [],
-        [],
-      ),
-    'registerGuardian' : IDL.Func([Guardian], [], []),
-    'registerParticipant' : IDL.Func([Participant], [], []),
-    'registerPlanManager' : IDL.Func([PlanManager], [], []),
-    'registerServiceProvider' : IDL.Func([ServiceProvider], [], []),
     'requestApproval' : IDL.Func([], [], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
-    'searchProviders' : IDL.Func([IDL.Text], [IDL.Vec(IDL.Text)], ['query']),
     'setApproval' : IDL.Func([IDL.Principal, ApprovalStatus], [], []),
-    'updateAIValidationThresholds' : IDL.Func(
-        [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Float64))],
-        [],
-        [],
-      ),
-    'updateCategorySpending' : IDL.Func(
-        [IDL.Principal, IDL.Text, IDL.Int],
-        [],
-        [],
-      ),
-    'uploadEvidence' : IDL.Func([EvidenceDocument], [], []),
-    'uploadPlan' : IDL.Func([ExternalBlob], [], []),
-    'validateBudgetTransaction' : IDL.Func(
-        [IDL.Principal, IDL.Text, IDL.Int],
-        [BudgetValidationResult],
-        [],
-      ),
-    'validateCompliance' : IDL.Func([IDL.Principal, IDL.Text], [IDL.Bool], []),
   });
 };
 

@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { TrendingUp, TrendingDown, Clock, Target } from 'lucide-react';
-import type { AIAgentMetrics } from '../../backend';
+import type { AIAgentMetrics } from '../../types/mock-types';
 
 interface AIMetricsOverviewProps {
   metrics: AIAgentMetrics;

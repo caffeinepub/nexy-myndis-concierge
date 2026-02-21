@@ -1,145 +1,105 @@
-import { useInternetIdentity } from '../../hooks/useInternetIdentity';
-import { useGetCallerUserProfile } from '../../hooks/useQueries';
-import { useUserRole } from '../../hooks/useUserRole';
-import { useNavigate } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
+import { useState } from 'react';
+import { Menu, X, Sparkles } from 'lucide-react';
 import LoginButton from '../auth/LoginButton';
-import { Home, FileText, Users, Calendar, Upload, Menu, X, DollarSign, Brain } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useInternetIdentity } from '../../hooks/useInternetIdentity';
+import { useUserRole } from '../../hooks/useUserRole';
 
 export default function Header() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { identity } = useInternetIdentity();
-  const { data: userProfile } = useGetCallerUserProfile();
-  const { isAdmin } = useUserRole();
+  const { role } = useUserRole();
   const navigate = useNavigate();
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const isAuthenticated = !!identity;
 
-  const getUserInitials = () => {
-    if (!userProfile) return '';
-    return userProfile.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  const getDashboardLink = () => {
+    if (!isAuthenticated) return '/';
+    
+    switch (role) {
+      case 'participant':
+        return '/dashboard';
+      case 'provider':
+        return '/provider-dashboard';
+      case 'guardian':
+        return '/guardian-dashboard';
+      case 'planManager':
+        return '/plan-manager-dashboard';
+      default:
+        return '/dashboard';
+    }
   };
 
-  const getRoleLabel = () => {
-    if (!userProfile) return 'Guest';
-    const role = userProfile.role.toLowerCase();
-    if (role === 'participant') return 'Participant';
-    if (role === 'guardian') return 'Guardian';
-    if (role === 'provider') return 'Provider';
-    if (role === 'planmanager') return 'Plan Manager';
-    return 'User';
-  };
-
-  const navLinks = [
-    { label: 'Dashboard', icon: Home, path: '/dashboard', show: isAuthenticated },
-    { label: 'Upload Plan', icon: Upload, path: '/plan/upload', show: isAuthenticated && userProfile?.role === 'participant' },
-    { label: 'Providers', icon: Users, path: '/providers', show: isAuthenticated },
-    { label: 'Create Invoice', icon: DollarSign, path: '/invoices/create', show: isAuthenticated && userProfile?.role === 'provider' },
-    { label: 'AI Monitoring', icon: Brain, path: '/admin/ai-agents', show: isAuthenticated && isAdmin() },
-  ];
+  const navLinks = isAuthenticated
+    ? [
+        { to: getDashboardLink(), label: 'Dashboard' },
+        { to: '/providers', label: 'Providers' },
+        ...(role === 'participant' ? [{ to: '/plan-upload', label: 'Upload Plan' }] : []),
+      ]
+    : [];
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 h-20 transition-all duration-300 ${
-        isScrolled
-          ? 'bg-background/95 backdrop-blur-lg shadow-md border-b border-border'
-          : 'bg-background/80 backdrop-blur-sm'
-      }`}
-    >
-      <div className="container mx-auto px-6 h-full">
-        <div className="flex items-center justify-between h-full">
-          {/* Logo - Top Left */}
-          <button
-            onClick={() => navigate({ to: '/' })}
-            className="flex items-center gap-3 shrink-0 group"
-          >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0d7377] to-[#16697a] flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
-              <span className="text-white font-bold text-xl">N</span>
+    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between h-20">
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 bg-gradient-to-br from-primary to-success rounded-xl flex items-center justify-center transition-transform group-hover:scale-110">
+              <Sparkles className="w-6 h-6 text-primary-foreground" />
             </div>
-            <span className="text-2xl font-bold text-primary hover:text-primary/80 transition-colors">
-              NDIS Connect
-            </span>
-          </button>
+            <span className="text-xl font-bold text-foreground">NDIS Connect</span>
+          </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
-            {navLinks.filter(link => link.show).map((link) => (
-              <button
-                key={link.path}
-                onClick={() => navigate({ to: link.path })}
-                className="flex items-center gap-2 text-foreground hover:text-primary transition-colors font-medium"
-              >
-                <link.icon className="w-4 h-4" />
-                {link.label}
-              </button>
-            ))}
-          </nav>
+          {navLinks.length > 0 && (
+            <nav className="hidden md:flex items-center gap-8">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className="text-foreground hover:text-primary transition-colors font-medium"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          )}
 
-          {/* User Section */}
-          <div className="flex items-center gap-4 shrink-0">
-            {isAuthenticated && userProfile && (
-              <div className="hidden md:flex items-center gap-3">
-                <div className="text-right">
-                  <div className="text-sm font-semibold text-foreground">{userProfile.name}</div>
-                  <div className="text-xs text-muted-foreground">{getRoleLabel()}</div>
-                </div>
-                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                  <span className="text-primary font-bold text-sm">{getUserInitials()}</span>
-                </div>
-              </div>
-            )}
+          {/* Right Section */}
+          <div className="hidden md:flex items-center gap-4">
             <LoginButton />
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 text-foreground hover:text-primary transition-colors"
-              aria-label="Toggle menu"
-            >
-              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
           </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            className="md:hidden p-2 text-foreground hover:text-primary transition-colors"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
         </div>
-
-        {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden absolute top-20 left-0 right-0 bg-background/95 backdrop-blur-lg border-b border-border shadow-lg">
-            <div className="container mx-auto px-6 py-4">
-              <nav className="flex flex-col gap-4">
-                {navLinks.filter(link => link.show).map((link) => (
-                  <button
-                    key={link.path}
-                    onClick={() => {
-                      navigate({ to: link.path });
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="flex items-center gap-2 text-foreground hover:text-primary transition-colors font-medium"
-                  >
-                    <link.icon className="w-4 h-4" />
-                    {link.label}
-                  </button>
-                ))}
-              </nav>
-              {isAuthenticated && userProfile && (
-                <div className="mt-4 pt-4 border-t border-border">
-                  <div className="text-sm font-semibold text-foreground">{userProfile.name}</div>
-                  <div className="text-xs text-muted-foreground">{getRoleLabel()}</div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
       </div>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden border-t border-border bg-background">
+          <nav className="container mx-auto px-4 py-4 flex flex-col gap-4">
+            {navLinks.map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className="text-foreground hover:text-primary transition-colors font-medium py-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {link.label}
+              </Link>
+            ))}
+            <div className="pt-2 border-t border-border">
+              <LoginButton />
+            </div>
+          </nav>
+        </div>
+      )}
     </header>
   );
 }

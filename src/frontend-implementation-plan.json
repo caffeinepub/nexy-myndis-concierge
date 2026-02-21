@@ -1,46 +1,41 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Remove Profile Completion Modal",
+  "title": "Retry Deployment - Frontend Verification",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Remove the profile completion modal component and its display logic from the application",
+      "summary": "Verify and ensure the deployment process completes successfully with proper error handling and logging",
       "acceptanceCriteria": [
-        "The profile setup modal no longer appears for any user",
-        "Users can access the application without being prompted to complete profile information",
-        "No popup requesting name and email is displayed"
+        "The deployment process is re-initiated successfully",
+        "Any deployment errors are properly logged and reported",
+        "The application is accessible after successful deployment"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/App.tsx",
+          "path": "frontend/src/main.tsx",
           "operation": "modify",
-          "description": "Remove the ProfileSetup modal component import, remove all state and logic related to showing the profile setup modal (including showProfileSetup conditional rendering, profileLoading state, and any useGetCallerUserProfile hook usage that determines modal visibility), and remove the ProfileSetup JSX element from the render tree"
+          "description": "Add error boundary and deployment verification logging to catch and report any initialization failures during app bootstrap"
         },
         {
-          "path": "frontend/src/components/auth/ProfileSetup.tsx",
+          "path": "frontend/src/hooks/useActor.ts",
           "operation": "modify",
-          "description": "Add a comment at the top of the file indicating this component is no longer actively used in the main application flow but is preserved for potential future use or reference"
-        }
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "summary": "Remove conditional logic that triggers profile completion based on missing user profile data",
-      "acceptanceCriteria": [
-        "Application flow no longer checks for or enforces profile completion",
-        "User can navigate freely without profile setup interruptions"
-      ],
-      "file_operations": [
+          "description": "Enhance actor initialization error handling with detailed logging for connection failures, authentication errors, and admin initialization issues"
+        },
+        {
+          "path": "frontend/src/hooks/useInternetIdentity.ts",
+          "operation": "modify",
+          "description": "Add comprehensive error logging for Internet Identity authentication failures, delegation errors, and session persistence issues"
+        },
+        {
+          "path": "frontend/src/components/common/DeploymentStatus.tsx",
+          "operation": "create",
+          "description": "Create a deployment status indicator component that displays connection health, backend availability, and authentication readiness for deployment verification"
+        },
         {
           "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Remove any conditional logic that checks userProfile === null or !userProfile to determine whether to show the profile setup modal. Remove the useGetCallerUserProfile hook call if it's only used for profile setup modal logic. Ensure the main application routing and dashboard access are not gated by profile completion checks"
-        },
-        {
-          "path": "frontend/src/pages/LandingPage.tsx",
-          "operation": "modify",
-          "description": "Review and remove any profile completion checks that might redirect users or block navigation based on missing profile data. Ensure authenticated users can navigate to their role-based dashboards without profile setup interruptions"
+          "description": "Add deployment verification checks on app initialization and display the DeploymentStatus component in development mode to confirm successful deployment"
         }
       ]
     }

@@ -3,9 +3,12 @@ import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import { useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import BudgetHealthIndicator from '../components/participant/BudgetHealthIndicator';
+import AIRiskAssessmentCard from '../components/guardian/AIRiskAssessmentCard';
+import AIBudgetPredictions from '../components/guardian/AIBudgetPredictions';
+import AIPriorityParticipants from '../components/guardian/AIPriorityParticipants';
 import PageLayout from '../components/layout/PageLayout';
 import LoadingState from '../components/common/LoadingState';
-import { Users, TrendingUp, Calendar, AlertCircle } from 'lucide-react';
+import { Users, TrendingUp, Calendar, AlertCircle, Brain } from 'lucide-react';
 
 export default function GuardianDashboard() {
   const { identity } = useInternetIdentity();
@@ -24,11 +27,12 @@ export default function GuardianDashboard() {
   }, [identity, navigate]);
 
   const participantsWithWarnings = alerts.length > 0 ? 1 : 0;
+  const aiInsightsCount = 5;
 
   if (guardianLoading) {
     return (
       <PageLayout title="Guardian Dashboard">
-        <LoadingState message="Loading your dashboard..." />
+        <LoadingState message="Loading guardian dashboard..." />
       </PageLayout>
     );
   }
@@ -55,7 +59,7 @@ export default function GuardianDashboard() {
       <div className="bg-gradient-to-r from-[#0d7377] to-[#1a1a2e] rounded-3xl p-12 text-white mb-12">
         <h1 className="text-4xl font-bold mb-4">Guardian Dashboard</h1>
         <p className="text-lg opacity-90">
-          Manage and coordinate care for your participants
+          Manage and coordinate care for your participants with AI-powered insights
         </p>
       </div>
 
@@ -71,10 +75,10 @@ export default function GuardianDashboard() {
 
         <div className="bg-white rounded-2xl p-8 shadow-md border border-[#eeeeee]">
           <div className="w-14 h-14 bg-[#e0f2f1] rounded-xl flex items-center justify-center mb-5">
-            <TrendingUp className="w-7 h-7 text-[#0d7377]" />
+            <Brain className="w-7 h-7 text-[#0d7377]" />
           </div>
-          <div className="text-3xl font-bold text-[#1a1a2e] mb-2">$0</div>
-          <div className="text-sm text-[#616161] font-medium">Total Budgets</div>
+          <div className="text-3xl font-bold text-[#1a1a2e] mb-2">{aiInsightsCount}</div>
+          <div className="text-sm text-[#616161] font-medium">AI Insights</div>
         </div>
 
         <div className="bg-white rounded-2xl p-8 shadow-md border border-[#eeeeee]">
@@ -92,6 +96,16 @@ export default function GuardianDashboard() {
           <div className="text-3xl font-bold text-[#1a1a2e] mb-2">{participantsWithWarnings}</div>
           <div className="text-sm text-[#616161] font-medium">Budget Warnings</div>
         </div>
+      </div>
+
+      {/* AI Insights Section */}
+      <div className="grid gap-8 lg:grid-cols-2 mb-8">
+        <AIRiskAssessmentCard />
+        <AIBudgetPredictions />
+      </div>
+
+      <div className="mb-8">
+        <AIPriorityParticipants />
       </div>
 
       {/* Content Cards */}

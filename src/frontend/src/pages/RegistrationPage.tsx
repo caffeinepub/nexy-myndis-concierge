@@ -64,6 +64,13 @@ export default function RegistrationPage() {
     setIsSubmitting(true);
 
     try {
+      // Save user profile first
+      await saveProfile.mutateAsync({
+        name: formData.name,
+        email: formData.email,
+        role: role,
+      });
+
       // Register based on role
       if (role === 'participant') {
         await registerParticipant.mutateAsync({
@@ -96,13 +103,6 @@ export default function RegistrationPage() {
         });
       }
 
-      // Save user profile
-      await saveProfile.mutateAsync({
-        name: formData.name,
-        email: formData.email,
-        role: role,
-      });
-
       // Invalidate queries to refresh data
       await queryClient.invalidateQueries({ queryKey: ['currentUserProfile'] });
       await queryClient.invalidateQueries({ queryKey: ['currentUserRole'] });
@@ -110,8 +110,15 @@ export default function RegistrationPage() {
 
       toast.success('Registration completed successfully!');
       
-      // Navigate to dashboard
-      navigate({ to: '/dashboard' });
+      // Navigate to appropriate dashboard
+      const dashboardRoutes: Record<string, string> = {
+        participant: '/dashboard',
+        provider: '/provider-dashboard',
+        guardian: '/guardian-dashboard',
+        planManager: '/plan-manager-dashboard',
+      };
+      
+      navigate({ to: dashboardRoutes[role] || '/dashboard' });
     } catch (error: any) {
       console.error('Registration error:', error);
       toast.error(error.message || 'Registration failed. Please try again.');
@@ -268,7 +275,7 @@ export default function RegistrationPage() {
                       onChange={handleInputChange}
                       required
                       className="w-full px-5 py-4 border-2 border-input rounded-xl text-base transition-all focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/20 bg-background"
-                      placeholder="Enter your NDIS number"
+                      placeholder="Your NDIS participant number"
                     />
                   </div>
 
@@ -282,8 +289,8 @@ export default function RegistrationPage() {
                       onChange={handleInputChange}
                       required
                       rows={3}
-                      className="w-full px-5 py-4 border-2 border-input rounded-xl text-base transition-all focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/20 bg-background"
-                      placeholder="Enter your address"
+                      className="w-full px-5 py-4 border-2 border-input rounded-xl text-base transition-all focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/20 bg-background resize-none"
+                      placeholder="Your residential address"
                     />
                   </div>
                 </div>
@@ -291,26 +298,56 @@ export default function RegistrationPage() {
 
               {((step === 2 && role !== 'participant') || (step === 3 && role === 'participant')) && (
                 <div className="space-y-6">
-                  <div className="bg-gradient-to-br from-primary/10 to-success/10 rounded-2xl p-8 text-center border border-primary/20">
-                    <h3 className="text-lg font-semibold text-foreground mb-2">
-                      You're all set!
-                    </h3>
-                    <p className="text-muted-foreground">
-                      Click complete to access your personalized dashboard
-                    </p>
+                  <div className="p-6 bg-muted rounded-xl">
+                    <h3 className="font-semibold text-foreground mb-3">Review Your Information</h3>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Name:</span>
+                        <span className="font-medium text-foreground">{formData.name}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Email:</span>
+                        <span className="font-medium text-foreground">{formData.email}</span>
+                      </div>
+                      {role === 'participant' && (
+                        <>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Age:</span>
+                            <span className="font-medium text-foreground">{formData.age}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">NDIS Number:</span>
+                            <span className="font-medium text-foreground">{formData.ndisNumber}</span>
+                          </div>
+                        </>
+                      )}
+                      {role === 'provider' && (
+                        <>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">ABN:</span>
+                            <span className="font-medium text-foreground">{formData.abn}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Services:</span>
+                            <span className="font-medium text-foreground">{formData.services}</span>
+                          </div>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
               )}
 
+              {/* Navigation Buttons */}
               <div className="flex gap-4 mt-8">
                 {step > 1 && (
                   <button
                     type="button"
                     onClick={handleBack}
                     disabled={isSubmitting}
-                    className="flex-1 px-6 py-4 border-2 border-input text-muted-foreground rounded-xl font-semibold hover:border-primary hover:text-primary transition-all disabled:opacity-50"
+                    className="flex-1 px-6 py-4 border-2 border-border rounded-xl font-semibold text-foreground hover:bg-muted transition-colors disabled:opacity-50"
                   >
-                    <ArrowLeft className="inline w-5 h-5 mr-2" />
+                    <ArrowLeft className="w-5 h-5 inline mr-2" />
                     Back
                   </button>
                 )}
@@ -319,21 +356,21 @@ export default function RegistrationPage() {
                   <button
                     type="button"
                     onClick={handleNext}
-                    className="flex-1 px-6 py-4 bg-gradient-to-r from-primary to-success text-primary-foreground rounded-xl font-semibold hover:shadow-lg hover:scale-105 transition-all"
+                    className="flex-1 px-6 py-4 bg-gradient-to-r from-primary to-success text-primary-foreground rounded-xl font-semibold hover:opacity-90 transition-opacity"
                   >
                     Next
-                    <ArrowRight className="inline w-5 h-5 ml-2" />
+                    <ArrowRight className="w-5 h-5 inline ml-2" />
                   </button>
                 ) : (
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="flex-1 px-6 py-4 bg-gradient-to-r from-primary to-success text-primary-foreground rounded-xl font-semibold hover:shadow-lg hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                    className="flex-1 px-6 py-4 bg-gradient-to-r from-primary to-success text-primary-foreground rounded-xl font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
                   >
                     {isSubmitting ? (
                       <>
-                        <Loader2 className="inline w-5 h-5 mr-2 animate-spin" />
-                        Completing...
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Registering...
                       </>
                     ) : (
                       'Complete Registration'

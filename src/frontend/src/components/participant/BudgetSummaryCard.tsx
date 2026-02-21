@@ -1,7 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { Progress } from '../ui/progress';
 import { DollarSign, AlertTriangle } from 'lucide-react';
-import type { NDISPlan } from '../../backend';
+import type { NDISPlan } from '../../types/mock-types';
 
 interface BudgetSummaryCardProps {
   plan?: NDISPlan;

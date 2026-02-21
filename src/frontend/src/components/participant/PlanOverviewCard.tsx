@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { FileText, Calendar, Target } from 'lucide-react';
 import { Badge } from '../ui/badge';
-import { FileText, Calendar, CheckCircle2 } from 'lucide-react';
-import type { NDISPlan } from '../../backend';
+import type { NDISPlan } from '../../types/mock-types';
 
 interface PlanOverviewCardProps {
   plan?: NDISPlan;
@@ -14,15 +14,10 @@ export default function PlanOverviewCard({ plan }: PlanOverviewCardProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FileText className="text-primary" />
-            Your NDIS Plan
+            Plan Overview
           </CardTitle>
           <CardDescription>No active plan found</CardDescription>
         </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">
-            Upload your NDIS plan to get started with managing your support services.
-          </p>
-        </CardContent>
       </Card>
     );
   }
@@ -30,61 +25,73 @@ export default function PlanOverviewCard({ plan }: PlanOverviewCardProps) {
   const startDate = new Date(Number(plan.startDate) / 1000000);
   const endDate = new Date(Number(plan.endDate) / 1000000);
 
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'active':
+        return <Badge variant="default">Active</Badge>;
+      case 'expired':
+        return <Badge variant="destructive">Expired</Badge>;
+      case 'pendingApproval':
+        return <Badge variant="secondary">Pending Approval</Badge>;
+      default:
+        return <Badge variant="outline">{status}</Badge>;
+    }
+  };
+
   return (
-    <Card className="shadow-layer-2 border-border bg-gradient-to-br from-card to-transparent">
+    <Card className="shadow-layer-2 border-border">
       <CardHeader>
         <div className="flex items-start justify-between">
           <div>
             <CardTitle className="flex items-center gap-2">
               <FileText className="text-primary" />
-              Your NDIS Plan
+              Plan Overview
             </CardTitle>
             <CardDescription>Plan #{plan.planNumber}</CardDescription>
           </div>
-          <Badge variant="default" className="bg-success text-success-foreground rounded-full px-3 py-1 font-medium">
-            Active
-          </Badge>
+          {getStatusBadge(plan.status)}
         </div>
       </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 p-3 rounded-lg">
-          <Calendar size={16} />
-          <span>
-            {startDate.toLocaleDateString()} - {endDate.toLocaleDateString()}
-          </span>
-        </div>
-        
-        {plan.goals.length > 0 && (
-          <div>
-            <h4 className="font-semibold text-foreground mb-3">Your Goals</h4>
-            <ul className="space-y-2">
-              {plan.goals.slice(0, 3).map((goal, index) => (
-                <li key={index} className="text-sm text-muted-foreground flex items-start gap-2">
-                  <CheckCircle2 size={16} className="text-primary mt-0.5 shrink-0" />
-                  <span>{goal}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {plan.categories.length > 0 && (
-          <div>
-            <h4 className="font-semibold text-foreground mb-3">Budget Categories</h4>
-            <div className="flex flex-wrap gap-2">
-              {plan.categories.slice(0, 4).map(([name, cat]) => (
-                <Badge key={name} variant="outline" className="rounded-lg px-3 py-1.5">
-                  {name}
-                </Badge>
-              ))}
-              {plan.categories.length > 4 && (
-                <Badge variant="outline" className="rounded-lg px-3 py-1.5">
-                  +{plan.categories.length - 4} more
-                </Badge>
-              )}
+      <CardContent className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Calendar className="w-4 h-4" />
+              <span>Start Date</span>
             </div>
+            <p className="text-sm font-semibold text-foreground">
+              {startDate.toLocaleDateString()}
+            </p>
           </div>
-        )}
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Calendar className="w-4 h-4" />
+              <span>End Date</span>
+            </div>
+            <p className="text-sm font-semibold text-foreground">
+              {endDate.toLocaleDateString()}
+            </p>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Target className="w-4 h-4" />
+            <span>Goals ({plan.goals.length})</span>
+          </div>
+          <div className="space-y-1">
+            {plan.goals.slice(0, 3).map((goal, index) => (
+              <p key={index} className="text-sm text-foreground pl-6">
+                • {goal}
+              </p>
+            ))}
+            {plan.goals.length > 3 && (
+              <p className="text-sm text-muted-foreground pl-6">
+                +{plan.goals.length - 3} more
+              </p>
+            )}
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

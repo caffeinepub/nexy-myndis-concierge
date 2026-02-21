@@ -2,7 +2,7 @@ import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import { Badge } from '../ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../ui/collapsible';
 import { AlertTriangle, CheckCircle, XCircle, ChevronDown, Calendar } from 'lucide-react';
-import type { BudgetValidationResult } from '../../backend';
+import type { BudgetValidationResult } from '../../types/mock-types';
 import { useState } from 'react';
 
 interface BudgetValidationAlertProps {

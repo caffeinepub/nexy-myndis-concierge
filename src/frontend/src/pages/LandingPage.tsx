@@ -4,6 +4,7 @@ import { useEffect, lazy, Suspense, useState, CSSProperties } from 'react';
 import { useUserRole } from '../hooks/useUserRole';
 import { ArrowRight } from 'lucide-react';
 import FloatingParticles from '../components/landing/FloatingParticles';
+import HeroParticles from '../components/landing/HeroParticles';
 import RippleButton from '../components/landing/RippleButton';
 import TrustIndicators from '../components/landing/TrustIndicators';
 import FeatureCardEnhanced from '../components/landing/FeatureCardEnhanced';
@@ -88,6 +89,9 @@ export default function LandingPage() {
           <div className="absolute bottom-1/3 right-1/4 w-[500px] h-[500px] bg-[#00b894] rounded-full blur-[140px] opacity-20 animate-float-slower" style={parallaxStyle} />
           <div className="absolute top-1/2 right-1/3 w-80 h-80 bg-[#16697a] rounded-full blur-[100px] opacity-25 animate-float-medium" />
         </div>
+
+        {/* Animated Hero Particles */}
+        <HeroParticles />
 
         {/* Floating Particles with Mouse-Following Effect */}
         <FloatingParticles />

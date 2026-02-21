@@ -8,7 +8,7 @@ import {
 import { Badge } from '../ui/badge';
 import { Separator } from '../ui/separator';
 import { CheckCircle, XCircle, AlertTriangle, Info } from 'lucide-react';
-import type { BudgetValidationResult } from '../../backend';
+import type { BudgetValidationResult } from '../../types/mock-types';
 
 interface ValidationExplanationModalProps {
   isOpen: boolean;

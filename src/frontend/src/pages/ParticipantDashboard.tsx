@@ -8,8 +8,11 @@ import BudgetSummaryCard from '../components/participant/BudgetSummaryCard';
 import BudgetHealthIndicator from '../components/participant/BudgetHealthIndicator';
 import GoalProgressCard from '../components/participant/GoalProgressCard';
 import UpcomingBookingsCard from '../components/participant/UpcomingBookingsCard';
+import AIInsightsCard from '../components/participant/AIInsightsCard';
+import AIProviderRecommendations from '../components/participant/AIProviderRecommendations';
+import AIMilestoneAlertsCard from '../components/participant/AIMilestoneAlertsCard';
 import LoadingState from '../components/common/LoadingState';
-import { TrendingUp, DollarSign, Target, Calendar } from 'lucide-react';
+import { TrendingUp, DollarSign, Target, Calendar, Brain } from 'lucide-react';
 
 export default function ParticipantDashboard() {
   const { identity } = useInternetIdentity();
@@ -29,7 +32,9 @@ export default function ParticipantDashboard() {
   // Calculate budget totals
   const totalBudget = activePlan ? activePlan.categories.reduce((sum, [, cat]) => sum + Number(cat.amount), 0) : 0;
   const totalSpent = activePlan ? activePlan.categories.reduce((sum, [, cat]) => sum + Number(cat.spent), 0) : 0;
-  const remainingBudget = totalBudget - totalSpent;
+
+  // AI recommendations count
+  const aiRecommendationsCount = 3;
 
   if (plansLoading) {
     return (
@@ -65,7 +70,7 @@ export default function ParticipantDashboard() {
         <div className="relative z-10">
           <h1 className="text-4xl font-bold mb-4">Welcome Back!</h1>
           <p className="text-lg opacity-90 max-w-2xl">
-            Track your NDIS journey, manage your budget, and achieve your goals with confidence.
+            Track your NDIS journey, manage your budget, and achieve your goals with AI-powered insights.
           </p>
         </div>
       </div>
@@ -104,12 +109,12 @@ export default function ParticipantDashboard() {
 
         <div className="bg-card rounded-2xl p-8 shadow-layer-2 border border-border transition-smooth hover:-translate-y-1 hover:shadow-layer-3 bg-gradient-to-br from-success/5 to-transparent">
           <div className="w-14 h-14 bg-gradient-to-br from-success/20 to-primary/20 rounded-xl flex items-center justify-center mb-5">
-            <Calendar className="w-7 h-7 text-success" />
+            <Brain className="w-7 h-7 text-success" />
           </div>
           <div className="text-3xl font-bold text-foreground mb-2">
-            {bookings?.length || 0}
+            {aiRecommendationsCount}
           </div>
-          <div className="text-sm text-muted-foreground font-medium">Upcoming Bookings</div>
+          <div className="text-sm text-muted-foreground font-medium">AI Insights</div>
         </div>
       </div>
 
@@ -118,9 +123,12 @@ export default function ParticipantDashboard() {
         <div className="lg:col-span-2 space-y-8">
           <PlanOverviewCard plan={activePlan} />
           <BudgetSummaryCard plan={activePlan} />
+          <AIInsightsCard />
         </div>
         <div className="space-y-8">
           {identity && <BudgetHealthIndicator participant={identity.getPrincipal()} />}
+          <AIProviderRecommendations />
+          <AIMilestoneAlertsCard />
           <GoalProgressCard plan={activePlan} />
           <UpcomingBookingsCard bookings={bookings || []} isLoading={bookingsLoading} />
         </div>

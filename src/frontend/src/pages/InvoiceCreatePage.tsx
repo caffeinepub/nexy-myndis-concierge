@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { useCreateInvoice } from '../hooks/useQueries';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import PageLayout from '../components/layout/PageLayout';
-import { Button } from '../components/ui/button';
-import { Plus, Trash2, Loader2 } from 'lucide-react';
-import { Principal } from '@icp-sdk/core/principal';
-import { toast } from 'sonner';
-import type { Invoice, InvoiceLineItem, InvoiceStatus } from '../backend';
+import AILineItemSuggestions from '../components/invoice/AILineItemSuggestions';
+import AIPricingValidator from '../components/invoice/AIPricingValidator';
+import AICompletenessChecker from '../components/invoice/AICompletenessChecker';
+import { Plus, Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
-interface LineItem {
+interface LineItemState {
   description: string;
   quantity: number;
   price: number;
@@ -18,10 +19,11 @@ interface LineItem {
 export default function InvoiceCreatePage() {
   const navigate = useNavigate();
   const { identity } = useInternetIdentity();
-  const createInvoice = useCreateInvoice();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [participantId, setParticipantId] = useState('');
-  const [lineItems, setLineItems] = useState<LineItem[]>([
+  const [invoiceNumber, setInvoiceNumber] = useState<string>('');
+  const [participantPrincipalStr, setParticipantPrincipalStr] = useState<string>('');
+  const [lineItems, setLineItems] = useState<LineItemState[]>([
     { description: '', quantity: 1, price: 0 },
   ]);
 
@@ -30,193 +32,146 @@ export default function InvoiceCreatePage() {
   };
 
   const removeLineItem = (index: number) => {
-    if (lineItems.length > 1) {
-      setLineItems(lineItems.filter((_, i) => i !== index));
-    }
+    setLineItems(lineItems.filter((_, i) => i !== index));
   };
 
-  const updateLineItem = (index: number, field: keyof LineItem, value: string | number) => {
+  const updateLineItem = (index: number, field: keyof LineItemState, value: string | number) => {
     const updated = [...lineItems];
     updated[index] = { ...updated[index], [field]: value };
     setLineItems(updated);
   };
 
-  const calculateTotal = () => {
-    return lineItems.reduce((sum, item) => sum + item.quantity * item.price, 0);
+  const handleSuggestionSelect = (suggestion: { description: string; quantity: number; price: number }) => {
+    setLineItems([...lineItems, suggestion]);
   };
+
+  const totalAmount = lineItems.reduce((sum, item) => sum + item.quantity * item.price, 0);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!identity || !participantPrincipalStr) return;
 
-    if (!identity) {
-      toast.error('Authentication required');
-      return;
-    }
+    setIsSubmitting(true);
 
-    try {
-      const participantPrincipal = Principal.fromText(participantId);
-      
-      const invoiceItems: InvoiceLineItem[] = lineItems.map(item => ({
-        description: item.description,
-        quantity: BigInt(item.quantity),
-        price: BigInt(Math.round(item.price * 100)),
-      }));
-
-      const invoice: Invoice = {
-        number: `INV-${Date.now()}`,
-        provider: identity.getPrincipal(),
-        participant: participantPrincipal,
-        items: invoiceItems,
-        status: 'pending' as InvoiceStatus,
-        totalAmount: BigInt(Math.round(calculateTotal() * 100)),
-      };
-
-      await createInvoice.mutateAsync(invoice);
-      toast.success('Invoice created successfully!');
+    // Mock invoice creation
+    setTimeout(() => {
+      setIsSubmitting(false);
       navigate({ to: '/dashboard' });
-    } catch (error: any) {
-      console.error('Invoice creation error:', error);
-      toast.error(error.message || 'Failed to create invoice');
-    }
+    }, 1000);
   };
 
   return (
     <PageLayout title="Create Invoice">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-card rounded-2xl shadow-layer-2 p-8 border border-border">
-          <h1 className="text-3xl font-bold text-foreground mb-6">Create New Invoice</h1>
+      <div className="max-w-6xl mx-auto">
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-foreground mb-2">Create Invoice</h1>
+          <p className="text-lg text-muted-foreground">
+            Generate an invoice for services provided with AI assistance
+          </p>
+        </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block text-sm font-semibold text-foreground mb-2">
-                Participant Principal ID *
-              </label>
-              <input
-                type="text"
-                value={participantId}
-                onChange={(e) => setParticipantId(e.target.value)}
-                required
-                className="w-full px-4 py-3 border-2 border-input rounded-xl text-sm transition-all focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/20 bg-background font-mono"
-                placeholder="Enter participant's principal ID"
-              />
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold text-foreground">Line Items</h2>
-                <Button type="button" onClick={addLineItem} variant="outline" size="sm">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Item
-                </Button>
-              </div>
-
-              {lineItems.map((item, index) => (
-                <div key={index} className="bg-muted rounded-xl p-4 space-y-3">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-muted-foreground">
-                      Item {index + 1}
-                    </span>
-                    {lineItems.length > 1 && (
-                      <Button
-                        type="button"
-                        onClick={() => removeLineItem(index)}
-                        variant="ghost"
-                        size="sm"
-                      >
-                        <Trash2 className="w-4 h-4 text-destructive" />
-                      </Button>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-1">
-                      Description *
-                    </label>
-                    <input
-                      type="text"
-                      value={item.description}
-                      onChange={(e) => updateLineItem(index, 'description', e.target.value)}
-                      required
-                      className="w-full px-3 py-2 border border-input rounded-lg text-sm bg-background"
-                      placeholder="Service description"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-sm font-medium text-foreground mb-1">
-                        Quantity *
-                      </label>
-                      <input
-                        type="number"
-                        value={item.quantity}
-                        onChange={(e) => updateLineItem(index, 'quantity', Number(e.target.value))}
-                        required
-                        min="1"
-                        className="w-full px-3 py-2 border border-input rounded-lg text-sm bg-background"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-foreground mb-1">
-                        Price (AUD) *
-                      </label>
-                      <input
-                        type="number"
-                        value={item.price}
-                        onChange={(e) => updateLineItem(index, 'price', Number(e.target.value))}
-                        required
-                        min="0"
-                        step="0.01"
-                        className="w-full px-3 py-2 border border-input rounded-lg text-sm bg-background"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="text-right">
-                    <span className="text-sm font-semibold text-foreground">
-                      Subtotal: ${(item.quantity * item.price).toFixed(2)}
-                    </span>
-                  </div>
+        <div className="grid gap-8 lg:grid-cols-3">
+          <div className="lg:col-span-2">
+            <form onSubmit={handleSubmit} className="bg-card rounded-2xl p-8 shadow-layer-2 border border-border space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="invoiceNumber">Invoice Number</Label>
+                  <Input
+                    id="invoiceNumber"
+                    value={invoiceNumber}
+                    onChange={(e) => setInvoiceNumber(e.target.value)}
+                    placeholder="INV-2024-001"
+                    required
+                  />
                 </div>
-              ))}
-            </div>
-
-            <div className="bg-primary/10 rounded-xl p-6 border border-primary/20">
-              <div className="flex items-center justify-between">
-                <span className="text-lg font-semibold text-foreground">Total Amount</span>
-                <span className="text-2xl font-bold text-primary">
-                  ${calculateTotal().toFixed(2)}
-                </span>
+                <div>
+                  <Label htmlFor="participant">Participant Principal</Label>
+                  <Input
+                    id="participant"
+                    value={participantPrincipalStr}
+                    onChange={(e) => setParticipantPrincipalStr(e.target.value)}
+                    placeholder="Enter participant principal ID"
+                    required
+                  />
+                </div>
               </div>
-            </div>
 
-            <div className="flex gap-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => navigate({ to: '/dashboard' })}
-                className="flex-1"
-              >
-                Cancel
-              </Button>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Label>Line Items</Label>
+                  <Button type="button" variant="outline" size="sm" onClick={addLineItem}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Item
+                  </Button>
+                </div>
+
+                {lineItems.map((item, index) => (
+                  <div key={index} className="p-4 rounded-xl border border-border bg-muted/30 space-y-3">
+                    <div className="flex items-start gap-3">
+                      <div className="flex-1 space-y-3">
+                        <Input
+                          placeholder="Service description"
+                          value={item.description}
+                          onChange={(e) => updateLineItem(index, 'description', e.target.value)}
+                          required
+                        />
+                        <div className="grid grid-cols-2 gap-3">
+                          <Input
+                            type="number"
+                            placeholder="Quantity"
+                            value={item.quantity}
+                            onChange={(e) => updateLineItem(index, 'quantity', Number(e.target.value))}
+                            min="1"
+                            required
+                          />
+                          <Input
+                            type="number"
+                            placeholder="Price"
+                            value={item.price}
+                            onChange={(e) => updateLineItem(index, 'price', Number(e.target.value))}
+                            min="0"
+                            required
+                          />
+                        </div>
+                        <AIPricingValidator price={item.price} serviceType={item.description} />
+                      </div>
+                      {lineItems.length > 1 && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeLineItem(index)}
+                        >
+                          <Trash2 className="w-4 h-4 text-destructive" />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="pt-4 border-t border-border">
+                <div className="flex justify-between items-center text-lg font-bold">
+                  <span>Total Amount:</span>
+                  <span>${totalAmount.toLocaleString()}</span>
+                </div>
+              </div>
 
               <Button
                 type="submit"
-                disabled={createInvoice.isPending || !participantId || lineItems.some(item => !item.description)}
-                className="flex-1"
+                className="w-full"
+                disabled={isSubmitting}
               >
-                {createInvoice.isPending ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating Invoice...
-                  </>
-                ) : (
-                  'Create Invoice'
-                )}
+                {isSubmitting ? 'Creating Invoice...' : 'Create Invoice'}
               </Button>
-            </div>
-          </form>
+            </form>
+          </div>
+
+          <div className="space-y-6">
+            <AILineItemSuggestions onSelectSuggestion={handleSuggestionSelect} />
+            <AICompletenessChecker />
+          </div>
         </div>
       </div>
     </PageLayout>

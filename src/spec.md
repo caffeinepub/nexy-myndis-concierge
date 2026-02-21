@@ -1,10 +1,11 @@
 # Specification
 
 ## Summary
-**Goal:** Remove the profile completion modal from the application.
+**Goal:** Retry the deployment process that previously failed.
 
 **Planned changes:**
-- Remove the "Complete Your Profile" modal that prompts users for name and email
-- Remove conditional logic that triggers the profile completion modal
+- Re-initiate the deployment process
+- Ensure proper error logging and reporting
+- Verify application accessibility after deployment
 
-**User-visible outcome:** Users can access and navigate the application without being interrupted by a profile completion popup.
+**User-visible outcome:** The application is successfully deployed and accessible to users.

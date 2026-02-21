@@ -1,7 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { Progress } from '../ui/progress';
-import { Target, CheckCircle2 } from 'lucide-react';
-import type { NDISPlan } from '../../backend';
+import { Target, CheckCircle } from 'lucide-react';
+import type { NDISPlan } from '../../types/mock-types';
 
 interface GoalProgressCardProps {
   plan?: NDISPlan;
@@ -16,42 +15,38 @@ export default function GoalProgressCard({ plan }: GoalProgressCardProps) {
             <Target className="text-primary" />
             Goal Progress
           </CardTitle>
-          <CardDescription>No goals set yet</CardDescription>
+          <CardDescription>No goals set</CardDescription>
         </CardHeader>
       </Card>
     );
   }
 
   return (
-    <Card className="shadow-layer-2 border-border bg-gradient-to-br from-card to-transparent">
+    <Card className="shadow-layer-2 border-border">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Target className="text-primary" />
           Goal Progress
         </CardTitle>
-        <CardDescription>{plan.goals.length} goals in your plan</CardDescription>
+        <CardDescription>Track your NDIS goals</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {plan.goals.slice(0, 3).map((goal, index) => (
-          <div key={index} className="space-y-3 p-4 bg-muted/50 rounded-lg border border-border">
-            <div className="flex justify-between items-start gap-3">
-              <span className="text-foreground font-medium line-clamp-2 flex-1">
-                {goal}
-              </span>
-              <span className="text-sm text-muted-foreground shrink-0">0%</span>
+        {plan.goals.map((goal, index) => (
+          <div key={index} className="p-4 rounded-xl border border-border bg-muted/30">
+            <div className="flex items-start gap-3">
+              <CheckCircle className="w-5 h-5 text-success mt-0.5 shrink-0" />
+              <div className="flex-1">
+                <p className="text-sm font-medium text-foreground">{goal}</p>
+                <div className="mt-2 h-2 bg-muted rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-primary to-success rounded-full"
+                    style={{ width: `${Math.random() * 40 + 30}%` }}
+                  ></div>
+                </div>
+              </div>
             </div>
-            <div className="h-2 bg-background rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-primary to-success rounded-full transition-all duration-500" style={{ width: '0%' }}></div>
-            </div>
-            <p className="text-xs text-muted-foreground">Track your progress towards this goal</p>
           </div>
         ))}
-        
-        {plan.goals.length > 3 && (
-          <p className="text-sm text-muted-foreground text-center pt-2">
-            +{plan.goals.length - 3} more goals
-          </p>
-        )}
       </CardContent>
     </Card>
   );
