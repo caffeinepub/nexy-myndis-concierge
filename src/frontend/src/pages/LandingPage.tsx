@@ -9,6 +9,7 @@ import TrustIndicators from '../components/landing/TrustIndicators';
 import FeatureCardEnhanced from '../components/landing/FeatureCardEnhanced';
 import ScrollReveal from '../components/common/ScrollReveal';
 import Footer from '../components/layout/Footer';
+import Header from '../components/layout/Header';
 
 const TestimonialsCarousel = lazy(() => import('../components/landing/TestimonialsCarousel'));
 const DemoVideoSection = lazy(() => import('../components/landing/DemoVideoSection'));
@@ -37,31 +38,12 @@ function useParallax(speed: number = 0.5): CSSProperties {
   };
 }
 
-function useScrollProgress() {
-  const [progress, setProgress] = useState(0);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const scrolled = window.scrollY;
-      const progress = (scrolled / scrollHeight) * 100;
-      setProgress(progress);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  return progress;
-}
-
 export default function LandingPage() {
   const { identity, login, loginStatus } = useInternetIdentity();
   const { role, isFetched } = useUserRole();
   const navigate = useNavigate();
   const parallaxStyle = useParallax(0.3);
   const parallaxStyleSlow = useParallax(0.15);
-  const scrollProgress = useScrollProgress();
 
   useEffect(() => {
     if (identity && isFetched) {
@@ -83,18 +65,16 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Scroll Progress Indicator */}
-      <div className="fixed top-0 left-0 right-0 h-1 z-50 bg-muted/20">
-        <div 
-          className="h-full bg-gradient-to-r from-primary via-[#00b894] to-primary transition-all duration-300"
-          style={{ width: `${scrollProgress}%` }}
-        />
-      </div>
+      {/* Always visible header with hero-matching background */}
+      <Header />
 
       {/* Hero Section */}
-      <section className="min-h-screen relative overflow-hidden flex items-center justify-center">
+      <section className="min-h-screen relative overflow-hidden flex items-center justify-center bg-background">
         {/* Animated Gradient Mesh Background */}
         <div className="absolute inset-0 bg-gradient-mesh">
+          {/* Top gradient overlay to match navbar background */}
+          <div className="absolute inset-0 bg-gradient-to-b from-background via-transparent to-transparent h-32" />
+          
           <div className="absolute inset-0 bg-gradient-to-br from-[#0d7377] via-[#1a1a2e] to-[#16697a] animate-gradient-shift" />
           
           {/* Noise Texture Overlay */}

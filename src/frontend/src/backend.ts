@@ -125,6 +125,10 @@ export interface BudgetCategory {
     spent: bigint;
     amount: bigint;
 }
+export interface _CaffeineStorageCreateCertificateResult {
+    method: string;
+    blob_hash: string;
+}
 export interface Invoice {
     status: InvoiceStatus;
     provider: Principal;
@@ -132,10 +136,6 @@ export interface Invoice {
     totalAmount: bigint;
     number: string;
     items: Array<InvoiceLineItem>;
-}
-export interface _CaffeineStorageCreateCertificateResult {
-    method: string;
-    blob_hash: string;
 }
 export interface NDISPlan {
     categories: Array<[string, BudgetCategory]>;
@@ -153,6 +153,10 @@ export interface AIAgentMetrics {
     falsePositiveRate: number;
     averageProcessingTime: bigint;
     confidenceScores: Array<number>;
+}
+export interface UserApprovalInfo {
+    status: ApprovalStatus;
+    principal: Principal;
 }
 export interface EvidenceDocument {
     id: string;
@@ -197,6 +201,11 @@ export interface ServiceProvider {
     rating?: bigint;
     priceList: Array<[string, bigint]>;
     serviceTypes: Array<string>;
+}
+export enum ApprovalStatus {
+    pending = "pending",
+    approved = "approved",
+    rejected = "rejected"
 }
 export enum BookingStatus {
     cancelled = "cancelled",
@@ -256,13 +265,17 @@ export interface backendInterface {
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     handleBudgetUtilization(utilizedAmount: bigint, participant: Principal, category: string): Promise<void>;
     isCallerAdmin(): Promise<boolean>;
+    isCallerApproved(): Promise<boolean>;
+    listApprovals(): Promise<Array<UserApprovalInfo>>;
     recordValidationFeedback(participant: Principal, transactionId: string, approved: boolean, reason: string): Promise<void>;
     registerGuardian(guardian: Guardian): Promise<void>;
     registerParticipant(participant: Participant): Promise<void>;
     registerPlanManager(planManager: PlanManager): Promise<void>;
     registerServiceProvider(provider: ServiceProvider): Promise<void>;
+    requestApproval(): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     searchProviders(serviceType: string): Promise<Array<string>>;
+    setApproval(user: Principal, status: ApprovalStatus): Promise<void>;
     updateAIValidationThresholds(thresholds: Array<[string, number]>): Promise<void>;
     updateCategorySpending(participant: Principal, category: string, amount: bigint): Promise<void>;
     uploadEvidence(doc: EvidenceDocument): Promise<void>;
@@ -270,7 +283,7 @@ export interface backendInterface {
     validateBudgetTransaction(participant: Principal, category: string, amount: bigint): Promise<BudgetValidationResult>;
     validateCompliance(participant: Principal, invoiceNumber: string): Promise<boolean>;
 }
-import type { Booking as _Booking, BookingStatus as _BookingStatus, BudgetCategory as _BudgetCategory, BudgetValidationResult as _BudgetValidationResult, EvidenceDocument as _EvidenceDocument, ExternalBlob as _ExternalBlob, Invoice as _Invoice, InvoiceLineItem as _InvoiceLineItem, InvoiceStatus as _InvoiceStatus, NDISPlan as _NDISPlan, PlanStatus as _PlanStatus, ServiceProvider as _ServiceProvider, TimeSlot as _TimeSlot, UserProfile as _UserProfile, UserRole as _UserRole, _CaffeineStorageRefillInformation as __CaffeineStorageRefillInformation, _CaffeineStorageRefillResult as __CaffeineStorageRefillResult } from "./declarations/backend.did.d.ts";
+import type { ApprovalStatus as _ApprovalStatus, Booking as _Booking, BookingStatus as _BookingStatus, BudgetCategory as _BudgetCategory, BudgetValidationResult as _BudgetValidationResult, EvidenceDocument as _EvidenceDocument, ExternalBlob as _ExternalBlob, Invoice as _Invoice, InvoiceLineItem as _InvoiceLineItem, InvoiceStatus as _InvoiceStatus, NDISPlan as _NDISPlan, PlanStatus as _PlanStatus, ServiceProvider as _ServiceProvider, TimeSlot as _TimeSlot, UserApprovalInfo as _UserApprovalInfo, UserProfile as _UserProfile, UserRole as _UserRole, _CaffeineStorageRefillInformation as __CaffeineStorageRefillInformation, _CaffeineStorageRefillResult as __CaffeineStorageRefillResult } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
     async _caffeineStorageBlobIsLive(arg0: Uint8Array): Promise<boolean> {
@@ -777,6 +790,34 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async isCallerApproved(): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.isCallerApproved();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.isCallerApproved();
+            return result;
+        }
+    }
+    async listApprovals(): Promise<Array<UserApprovalInfo>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.listApprovals();
+                return from_candid_vec_n46(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.listApprovals();
+            return from_candid_vec_n46(this._uploadFile, this._downloadFile, result);
+        }
+    }
     async recordValidationFeedback(arg0: Principal, arg1: string, arg2: boolean, arg3: string): Promise<void> {
         if (this.processError) {
             try {
@@ -847,6 +888,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async requestApproval(): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.requestApproval();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.requestApproval();
+            return result;
+        }
+    }
     async saveCallerUserProfile(arg0: UserProfile): Promise<void> {
         if (this.processError) {
             try {
@@ -872,6 +927,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.searchProviders(arg0);
+            return result;
+        }
+    }
+    async setApproval(arg0: Principal, arg1: ApprovalStatus): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.setApproval(arg0, to_candid_ApprovalStatus_n51(this._uploadFile, this._downloadFile, arg1));
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.setApproval(arg0, to_candid_ApprovalStatus_n51(this._uploadFile, this._downloadFile, arg1));
             return result;
         }
     }
@@ -906,28 +975,28 @@ export class Backend implements backendInterface {
     async uploadEvidence(arg0: EvidenceDocument): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.uploadEvidence(await to_candid_EvidenceDocument_n46(this._uploadFile, this._downloadFile, arg0));
+                const result = await this.actor.uploadEvidence(await to_candid_EvidenceDocument_n53(this._uploadFile, this._downloadFile, arg0));
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.uploadEvidence(await to_candid_EvidenceDocument_n46(this._uploadFile, this._downloadFile, arg0));
+            const result = await this.actor.uploadEvidence(await to_candid_EvidenceDocument_n53(this._uploadFile, this._downloadFile, arg0));
             return result;
         }
     }
     async uploadPlan(arg0: ExternalBlob): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.uploadPlan(await to_candid_ExternalBlob_n48(this._uploadFile, this._downloadFile, arg0));
+                const result = await this.actor.uploadPlan(await to_candid_ExternalBlob_n55(this._uploadFile, this._downloadFile, arg0));
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.uploadPlan(await to_candid_ExternalBlob_n48(this._uploadFile, this._downloadFile, arg0));
+            const result = await this.actor.uploadPlan(await to_candid_ExternalBlob_n55(this._uploadFile, this._downloadFile, arg0));
             return result;
         }
     }
@@ -935,14 +1004,14 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.validateBudgetTransaction(arg0, arg1, arg2);
-                return from_candid_BudgetValidationResult_n49(this._uploadFile, this._downloadFile, result);
+                return from_candid_BudgetValidationResult_n56(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.validateBudgetTransaction(arg0, arg1, arg2);
-            return from_candid_BudgetValidationResult_n49(this._uploadFile, this._downloadFile, result);
+            return from_candid_BudgetValidationResult_n56(this._uploadFile, this._downloadFile, result);
         }
     }
     async validateCompliance(arg0: Principal, arg1: string): Promise<boolean> {
@@ -960,14 +1029,17 @@ export class Backend implements backendInterface {
         }
     }
 }
+function from_candid_ApprovalStatus_n49(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _ApprovalStatus): ApprovalStatus {
+    return from_candid_variant_n50(_uploadFile, _downloadFile, value);
+}
 function from_candid_BookingStatus_n36(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _BookingStatus): BookingStatus {
     return from_candid_variant_n37(_uploadFile, _downloadFile, value);
 }
 function from_candid_Booking_n34(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Booking): Booking {
     return from_candid_record_n35(_uploadFile, _downloadFile, value);
 }
-function from_candid_BudgetValidationResult_n49(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _BudgetValidationResult): BudgetValidationResult {
-    return from_candid_record_n50(_uploadFile, _downloadFile, value);
+function from_candid_BudgetValidationResult_n56(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _BudgetValidationResult): BudgetValidationResult {
+    return from_candid_record_n57(_uploadFile, _downloadFile, value);
 }
 async function from_candid_EvidenceDocument_n39(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _EvidenceDocument): Promise<EvidenceDocument> {
     return await from_candid_record_n40(_uploadFile, _downloadFile, value);
@@ -990,6 +1062,9 @@ function from_candid_PlanStatus_n23(_uploadFile: (file: ExternalBlob) => Promise
 function from_candid_ServiceProvider_n28(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _ServiceProvider): ServiceProvider {
     return from_candid_record_n29(_uploadFile, _downloadFile, value);
 }
+function from_candid_UserApprovalInfo_n47(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserApprovalInfo): UserApprovalInfo {
+    return from_candid_record_n48(_uploadFile, _downloadFile, value);
+}
 function from_candid_UserRole_n31(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserRole): UserRole {
     return from_candid_variant_n32(_uploadFile, _downloadFile, value);
 }
@@ -1002,7 +1077,7 @@ async function from_candid_opt_n25(_uploadFile: (file: ExternalBlob) => Promise<
 function from_candid_opt_n30(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_UserProfile]): UserProfile | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n51(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [bigint]): bigint | null {
+function from_candid_opt_n58(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [bigint]): bigint | null {
     return value.length === 0 ? null : value[0];
 }
 function from_candid_opt_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [boolean]): boolean | null {
@@ -1143,6 +1218,18 @@ function from_candid_record_n43(_uploadFile: (file: ExternalBlob) => Promise<Uin
         items: value.items
     };
 }
+function from_candid_record_n48(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    status: _ApprovalStatus;
+    principal: Principal;
+}): {
+    status: ApprovalStatus;
+    principal: Principal;
+} {
+    return {
+        status: from_candid_ApprovalStatus_n49(_uploadFile, _downloadFile, value.status),
+        principal: value.principal
+    };
+}
 function from_candid_record_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     success: [] | [boolean];
     topped_up_amount: [] | [bigint];
@@ -1155,7 +1242,7 @@ function from_candid_record_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint
         topped_up_amount: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.topped_up_amount))
     };
 }
-function from_candid_record_n50(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_record_n57(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     reasons: Array<string>;
     valid: boolean;
     warnings: Array<string>;
@@ -1173,7 +1260,7 @@ function from_candid_record_n50(_uploadFile: (file: ExternalBlob) => Promise<Uin
         valid: value.valid,
         warnings: value.warnings,
         recommendedAdjustments: value.recommendedAdjustments,
-        predictedDepletionDate: record_opt_to_undefined(from_candid_opt_n51(_uploadFile, _downloadFile, value.predictedDepletionDate))
+        predictedDepletionDate: record_opt_to_undefined(from_candid_opt_n58(_uploadFile, _downloadFile, value.predictedDepletionDate))
     };
 }
 function from_candid_variant_n24(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
@@ -1214,6 +1301,15 @@ function from_candid_variant_n45(_uploadFile: (file: ExternalBlob) => Promise<Ui
 }): InvoiceStatus {
     return "pending" in value ? InvoiceStatus.pending : "paid" in value ? InvoiceStatus.paid : "approved" in value ? InvoiceStatus.approved : "rejected" in value ? InvoiceStatus.rejected : value;
 }
+function from_candid_variant_n50(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    pending: null;
+} | {
+    approved: null;
+} | {
+    rejected: null;
+}): ApprovalStatus {
+    return "pending" in value ? ApprovalStatus.pending : "approved" in value ? ApprovalStatus.approved : "rejected" in value ? ApprovalStatus.rejected : value;
+}
 async function from_candid_vec_n20(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_NDISPlan>): Promise<Array<NDISPlan>> {
     return await Promise.all(value.map(async (x)=>await from_candid_NDISPlan_n21(_uploadFile, _downloadFile, x)));
 }
@@ -1229,16 +1325,22 @@ async function from_candid_vec_n38(_uploadFile: (file: ExternalBlob) => Promise<
 function from_candid_vec_n41(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_Invoice>): Array<Invoice> {
     return value.map((x)=>from_candid_Invoice_n42(_uploadFile, _downloadFile, x));
 }
+function from_candid_vec_n46(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_UserApprovalInfo>): Array<UserApprovalInfo> {
+    return value.map((x)=>from_candid_UserApprovalInfo_n47(_uploadFile, _downloadFile, x));
+}
+function to_candid_ApprovalStatus_n51(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ApprovalStatus): _ApprovalStatus {
+    return to_candid_variant_n52(_uploadFile, _downloadFile, value);
+}
 function to_candid_BookingStatus_n14(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: BookingStatus): _BookingStatus {
     return to_candid_variant_n15(_uploadFile, _downloadFile, value);
 }
 function to_candid_Booking_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Booking): _Booking {
     return to_candid_record_n13(_uploadFile, _downloadFile, value);
 }
-async function to_candid_EvidenceDocument_n46(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: EvidenceDocument): Promise<_EvidenceDocument> {
-    return await to_candid_record_n47(_uploadFile, _downloadFile, value);
+async function to_candid_EvidenceDocument_n53(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: EvidenceDocument): Promise<_EvidenceDocument> {
+    return await to_candid_record_n54(_uploadFile, _downloadFile, value);
 }
-async function to_candid_ExternalBlob_n48(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ExternalBlob): Promise<_ExternalBlob> {
+async function to_candid_ExternalBlob_n55(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ExternalBlob): Promise<_ExternalBlob> {
     return await _uploadFile(value);
 }
 function to_candid_InvoiceStatus_n18(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: InvoiceStatus): _InvoiceStatus {
@@ -1316,7 +1418,7 @@ function to_candid_record_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8A
         proposed_top_up_amount: value.proposed_top_up_amount ? candid_some(value.proposed_top_up_amount) : candid_none()
     };
 }
-async function to_candid_record_n47(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+async function to_candid_record_n54(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     id: string;
     provider: Principal;
     file: ExternalBlob;
@@ -1332,7 +1434,7 @@ async function to_candid_record_n47(_uploadFile: (file: ExternalBlob) => Promise
     return {
         id: value.id,
         provider: value.provider,
-        file: await to_candid_ExternalBlob_n48(_uploadFile, _downloadFile, value.file),
+        file: await to_candid_ExternalBlob_n55(_uploadFile, _downloadFile, value.file),
         participant: value.participant,
         category: value.category
     };
@@ -1416,6 +1518,21 @@ function to_candid_variant_n19(_uploadFile: (file: ExternalBlob) => Promise<Uint
     } : value == InvoiceStatus.approved ? {
         approved: null
     } : value == InvoiceStatus.rejected ? {
+        rejected: null
+    } : value;
+}
+function to_candid_variant_n52(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ApprovalStatus): {
+    pending: null;
+} | {
+    approved: null;
+} | {
+    rejected: null;
+} {
+    return value == ApprovalStatus.pending ? {
+        pending: null
+    } : value == ApprovalStatus.approved ? {
+        approved: null
+    } : value == ApprovalStatus.rejected ? {
         rejected: null
     } : value;
 }

@@ -17,6 +17,9 @@ export interface AIAgentMetrics {
   'averageProcessingTime' : bigint,
   'confidenceScores' : Array<number>,
 }
+export type ApprovalStatus = { 'pending' : null } |
+  { 'approved' : null } |
+  { 'rejected' : null };
 export interface Booking {
   'status' : BookingStatus,
   'serviceType' : string,
@@ -107,6 +110,10 @@ export interface ServiceProvider {
   'serviceTypes' : Array<string>,
 }
 export interface TimeSlot { 'end' : bigint, 'start' : bigint }
+export interface UserApprovalInfo {
+  'status' : ApprovalStatus,
+  'principal' : Principal,
+}
 export interface UserProfile {
   'name' : string,
   'role' : string,
@@ -178,6 +185,8 @@ export interface _SERVICE {
     undefined
   >,
   'isCallerAdmin' : ActorMethod<[], boolean>,
+  'isCallerApproved' : ActorMethod<[], boolean>,
+  'listApprovals' : ActorMethod<[], Array<UserApprovalInfo>>,
   'recordValidationFeedback' : ActorMethod<
     [Principal, string, boolean, string],
     undefined
@@ -186,8 +195,10 @@ export interface _SERVICE {
   'registerParticipant' : ActorMethod<[Participant], undefined>,
   'registerPlanManager' : ActorMethod<[PlanManager], undefined>,
   'registerServiceProvider' : ActorMethod<[ServiceProvider], undefined>,
+  'requestApproval' : ActorMethod<[], undefined>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
   'searchProviders' : ActorMethod<[string], Array<string>>,
+  'setApproval' : ActorMethod<[Principal, ApprovalStatus], undefined>,
   'updateAIValidationThresholds' : ActorMethod<
     [Array<[string, number]>],
     undefined

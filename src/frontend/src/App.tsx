@@ -1,5 +1,4 @@
 import { useInternetIdentity } from './hooks/useInternetIdentity';
-import { useGetCallerUserProfile } from './hooks/useQueries';
 import { createRouter, RouterProvider, createRoute, createRootRoute, Outlet } from '@tanstack/react-router';
 import LandingPage from './pages/LandingPage';
 import GetStartedPage from './pages/GetStartedPage';
@@ -14,10 +13,10 @@ import BookingPage from './pages/BookingPage';
 import InvoiceCreatePage from './pages/InvoiceCreatePage';
 import AdminAIAgentDashboard from './pages/AdminAIAgentDashboard';
 import OnboardingFlow from './components/onboarding/OnboardingFlow';
-import ProfileSetup from './components/auth/ProfileSetup';
 import LoadingState from './components/common/LoadingState';
 import PageTransition from './components/common/PageTransition';
 import { useEffect, useState } from 'react';
+import { useGetCallerUserProfile } from './hooks/useQueries';
 
 function RootLayout() {
   return (
@@ -125,18 +124,13 @@ declare module '@tanstack/react-router' {
 
 export default function App() {
   const { identity, isInitializing } = useInternetIdentity();
-  const { data: userProfile, isLoading: profileLoading, isFetched } = useGetCallerUserProfile();
-  const [showProfileSetup, setShowProfileSetup] = useState(false);
+  const { data: userProfile } = useGetCallerUserProfile();
   const [showOnboarding, setShowOnboarding] = useState(false);
 
   const isAuthenticated = !!identity;
 
   useEffect(() => {
-    if (isAuthenticated && !profileLoading && isFetched && userProfile === null) {
-      setShowProfileSetup(true);
-    } else if (userProfile) {
-      setShowProfileSetup(false);
-      
+    if (isAuthenticated && userProfile) {
       // Check if user should see onboarding
       if (userProfile.role === 'participant') {
         const hasSeenOnboarding = localStorage.getItem('onboarding_completed');
@@ -145,11 +139,7 @@ export default function App() {
         }
       }
     }
-  }, [isAuthenticated, profileLoading, isFetched, userProfile]);
-
-  const handleProfileSetupComplete = () => {
-    setShowProfileSetup(false);
-  };
+  }, [isAuthenticated, userProfile]);
 
   const handleOnboardingComplete = () => {
     localStorage.setItem('onboarding_completed', 'true');
@@ -163,18 +153,10 @@ export default function App() {
   return (
     <>
       <RouterProvider router={router} />
-      {isAuthenticated && (
-        <>
-          <ProfileSetup
-            isOpen={showProfileSetup}
-            onComplete={handleProfileSetupComplete}
-          />
-          {showOnboarding && (
-            <div className="fixed inset-0 z-50 overflow-y-auto bg-background">
-              <OnboardingFlow onComplete={handleOnboardingComplete} />
-            </div>
-          )}
-        </>
+      {isAuthenticated && showOnboarding && (
+        <div className="fixed inset-0 z-[60] overflow-y-auto bg-background">
+          <OnboardingFlow onComplete={handleOnboardingComplete} />
+        </div>
       )}
     </>
   );

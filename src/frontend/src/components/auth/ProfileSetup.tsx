@@ -1,3 +1,6 @@
+// NOTE: This component is no longer actively used in the main application flow
+// but is preserved for potential future use or reference.
+
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog';
 import { Button } from '../ui/button';

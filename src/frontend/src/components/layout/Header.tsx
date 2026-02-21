@@ -50,20 +50,25 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 h-20 transition-all duration-300 ${
         isScrolled
-          ? 'bg-background/80 backdrop-blur-lg shadow-md border-b border-border'
-          : 'bg-transparent'
+          ? 'bg-background/95 backdrop-blur-lg shadow-md border-b border-border'
+          : 'bg-background/80 backdrop-blur-sm'
       }`}
     >
-      <div className="container mx-auto px-6 py-4">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
+      <div className="container mx-auto px-6 h-full">
+        <div className="flex items-center justify-between h-full">
+          {/* Logo - Top Left */}
           <button
             onClick={() => navigate({ to: '/' })}
-            className="text-2xl font-bold text-primary hover:text-primary/80 transition-colors"
+            className="flex items-center gap-3 shrink-0 group"
           >
-            NDIS Connect
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0d7377] to-[#16697a] flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
+              <span className="text-white font-bold text-xl">N</span>
+            </div>
+            <span className="text-2xl font-bold text-primary hover:text-primary/80 transition-colors">
+              NDIS Connect
+            </span>
           </button>
 
           {/* Desktop Navigation */}
@@ -81,7 +86,7 @@ export default function Header() {
           </nav>
 
           {/* User Section */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 shrink-0">
             {isAuthenticated && userProfile && (
               <div className="hidden md:flex items-center gap-3">
                 <div className="text-right">
@@ -99,6 +104,7 @@ export default function Header() {
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="md:hidden p-2 text-foreground hover:text-primary transition-colors"
+              aria-label="Toggle menu"
             >
               {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -107,28 +113,30 @@ export default function Header() {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden mt-4 pb-4 border-t border-border pt-4">
-            <nav className="flex flex-col gap-4">
-              {navLinks.filter(link => link.show).map((link) => (
-                <button
-                  key={link.path}
-                  onClick={() => {
-                    navigate({ to: link.path });
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className="flex items-center gap-2 text-foreground hover:text-primary transition-colors font-medium"
-                >
-                  <link.icon className="w-4 h-4" />
-                  {link.label}
-                </button>
-              ))}
-            </nav>
-            {isAuthenticated && userProfile && (
-              <div className="mt-4 pt-4 border-t border-border">
-                <div className="text-sm font-semibold text-foreground">{userProfile.name}</div>
-                <div className="text-xs text-muted-foreground">{getRoleLabel()}</div>
-              </div>
-            )}
+          <div className="md:hidden absolute top-20 left-0 right-0 bg-background/95 backdrop-blur-lg border-b border-border shadow-lg">
+            <div className="container mx-auto px-6 py-4">
+              <nav className="flex flex-col gap-4">
+                {navLinks.filter(link => link.show).map((link) => (
+                  <button
+                    key={link.path}
+                    onClick={() => {
+                      navigate({ to: link.path });
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="flex items-center gap-2 text-foreground hover:text-primary transition-colors font-medium"
+                  >
+                    <link.icon className="w-4 h-4" />
+                    {link.label}
+                  </button>
+                ))}
+              </nav>
+              {isAuthenticated && userProfile && (
+                <div className="mt-4 pt-4 border-t border-border">
+                  <div className="text-sm font-semibold text-foreground">{userProfile.name}</div>
+                  <div className="text-xs text-muted-foreground">{getRoleLabel()}</div>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>

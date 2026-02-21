@@ -1,18 +1,53 @@
 import { useGetGuardian, useGetBudgetThresholdAlerts } from '../hooks/useQueries';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
+import { useNavigate } from '@tanstack/react-router';
+import { useEffect } from 'react';
 import BudgetHealthIndicator from '../components/participant/BudgetHealthIndicator';
 import PageLayout from '../components/layout/PageLayout';
+import LoadingState from '../components/common/LoadingState';
 import { Users, TrendingUp, Calendar, AlertCircle } from 'lucide-react';
 
 export default function GuardianDashboard() {
   const { identity } = useInternetIdentity();
-  const { data: guardian } = useGetGuardian();
+  const navigate = useNavigate();
+  const { data: guardian, isLoading: guardianLoading, error: guardianError } = useGetGuardian();
   
   // Only fetch alerts if guardian data is available
   const participantPrincipal = guardian?.participant;
-  const { data: alerts = [] } = useGetBudgetThresholdAlerts(participantPrincipal!);
+  const { data: alerts = [] } = useGetBudgetThresholdAlerts(participantPrincipal);
+
+  // Redirect to get-started if not authenticated
+  useEffect(() => {
+    if (!identity) {
+      navigate({ to: '/get-started' });
+    }
+  }, [identity, navigate]);
 
   const participantsWithWarnings = alerts.length > 0 ? 1 : 0;
+
+  if (guardianLoading) {
+    return (
+      <PageLayout title="Guardian Dashboard">
+        <LoadingState message="Loading your dashboard..." />
+      </PageLayout>
+    );
+  }
+
+  if (guardianError) {
+    return (
+      <PageLayout title="Guardian Dashboard">
+        <div className="flex flex-col items-center justify-center py-12">
+          <p className="text-destructive mb-4">Error loading guardian data</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
+          >
+            Retry
+          </button>
+        </div>
+      </PageLayout>
+    );
+  }
 
   return (
     <PageLayout title="Guardian Dashboard">
@@ -30,7 +65,7 @@ export default function GuardianDashboard() {
           <div className="w-14 h-14 bg-[#e0f2f1] rounded-xl flex items-center justify-center mb-5">
             <Users className="w-7 h-7 text-[#0d7377]" />
           </div>
-          <div className="text-3xl font-bold text-[#1a1a2e] mb-2">3</div>
+          <div className="text-3xl font-bold text-[#1a1a2e] mb-2">1</div>
           <div className="text-sm text-[#616161] font-medium">Participants</div>
         </div>
 
@@ -38,7 +73,7 @@ export default function GuardianDashboard() {
           <div className="w-14 h-14 bg-[#e0f2f1] rounded-xl flex items-center justify-center mb-5">
             <TrendingUp className="w-7 h-7 text-[#0d7377]" />
           </div>
-          <div className="text-3xl font-bold text-[#1a1a2e] mb-2">$125K</div>
+          <div className="text-3xl font-bold text-[#1a1a2e] mb-2">$0</div>
           <div className="text-sm text-[#616161] font-medium">Total Budgets</div>
         </div>
 
@@ -46,7 +81,7 @@ export default function GuardianDashboard() {
           <div className="w-14 h-14 bg-[#e0f2f1] rounded-xl flex items-center justify-center mb-5">
             <Calendar className="w-7 h-7 text-[#0d7377]" />
           </div>
-          <div className="text-3xl font-bold text-[#1a1a2e] mb-2">8</div>
+          <div className="text-3xl font-bold text-[#1a1a2e] mb-2">0</div>
           <div className="text-sm text-[#616161] font-medium">Upcoming Bookings</div>
         </div>
 

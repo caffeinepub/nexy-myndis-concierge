@@ -1,3 +1,4 @@
+// No changes needed.
 import Map "mo:core/Map";
 import Runtime "mo:core/Runtime";
 import Array "mo:core/Array";
@@ -11,13 +12,15 @@ import Principal "mo:core/Principal";
 import Int "mo:core/Int";
 import MixinStorage "blob-storage/Mixin";
 import Storage "blob-storage/Storage";
-import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
+import MixinAuthorization "authorization/MixinAuthorization";
+import UserApproval "user-approval/approval";
 
 actor {
   include MixinStorage();
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
+  let approvalState = UserApproval.initState(accessControlState);
 
   type UserRole = AccessControl.UserRole;
   type BookingStatus = { #pending; #confirmed; #cancelled };
@@ -132,6 +135,29 @@ actor {
   let complianceDocs = Map.empty<Text, ComplianceStatus>();
   let budgetThresholdAlerts = Map.empty<Principal, Set.Set<BudgetThresholdAlert>>();
 
+  // User Approval Functions
+  public query ({ caller }) func isCallerApproved() : async Bool {
+    AccessControl.hasPermission(accessControlState, caller, #admin) or UserApproval.isApproved(approvalState, caller);
+  };
+
+  public shared ({ caller }) func requestApproval() : async () {
+    UserApproval.requestApproval(approvalState, caller);
+  };
+
+  public shared ({ caller }) func setApproval(user : Principal, status : UserApproval.ApprovalStatus) : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can perform this action");
+    };
+    UserApproval.setApproval(approvalState, user, status);
+  };
+
+  public query ({ caller }) func listApprovals() : async [UserApproval.UserApprovalInfo] {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can perform this action");
+    };
+    UserApproval.listApprovals(approvalState);
+  };
+
   // User Profile Management
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
@@ -141,6 +167,9 @@ actor {
   };
 
   public query ({ caller }) func getUserProfile(user : Principal) : async ?UserProfile {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can view profiles");
+    };
     if (caller != user and not AccessControl.isAdmin(accessControlState, caller)) {
       Runtime.trap("Unauthorized: Can only view your own profile");
     };
@@ -195,6 +224,21 @@ actor {
     caller == participant or
     isGuardianOf(caller, participant) or
     AccessControl.isAdmin(accessControlState, caller);
+  };
+
+  private func isProviderInvolvedInTransaction(provider : Principal, participant : Principal, invoiceNumber : Text) : Bool {
+    switch (invoices.get(participant)) {
+      case (null) { false };
+      case (?invoicesList) {
+        let invoicesArray = invoicesList.toArray();
+        switch (invoicesArray.find(func(inv : Invoice) : Bool { 
+          inv.number == invoiceNumber and inv.provider == provider 
+        })) {
+          case (null) { false };
+          case (?_) { true };
+        };
+      };
+    };
   };
 
   public query ({ caller }) func getProvider(provider : Principal) : async ServiceProvider {
@@ -312,6 +356,7 @@ actor {
     if (not isParticipant(guardian.participant)) {
       Runtime.trap("Cannot register guardian: Participant does not exist");
     };
+    // Note: In production, this should require participant or legal authority approval
     guardians.add(caller, guardian);
   };
 
@@ -332,12 +377,14 @@ actor {
     if (not isProvider(caller)) {
       Runtime.trap("Unauthorized: Only registered providers can add availability");
     };
+    // Implementation would update provider availability here
   };
 
   public query ({ caller }) func searchProviders(serviceType : Text) : async [Text] {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only authenticated users can search providers");
     };
+    // Implementation would search and return matching providers
     [];
   };
 
@@ -345,6 +392,7 @@ actor {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only authenticated users can search providers");
     };
+    // Implementation would return available providers
     [];
   };
 
@@ -421,6 +469,7 @@ actor {
     if (not isParticipant(participant)) {
       Runtime.trap("Invalid participant");
     };
+    // Implementation would update category spending here
   };
 
   public shared ({ caller }) func createBooking(booking : Booking) : async () {
@@ -664,16 +713,20 @@ actor {
     };
   };
 
-  // Internal function - only callable by the canister itself (AI agents)
-  public shared ({ caller }) func handleBudgetUtilization(utilizedAmount : Int, participant : Principal, category : Text) : async () {
-    // This function should only be called internally by AI agents
-    if (not AccessControl.isAdmin(accessControlState, caller)) {
-      Runtime.trap("Unauthorized: Only admins can call this function");
-    };
-
+  // Internal function - only callable by admins (representing AI agents/system)
+  private func handleBudgetUtilizationInternal(utilizedAmount : Int, participant : Principal, category : Text) : () {
     if (not isParticipant(participant)) {
       Runtime.trap("Invalid participant");
     };
+    // Implementation would handle budget utilization tracking
+  };
+
+  public shared ({ caller }) func handleBudgetUtilization(utilizedAmount : Int, participant : Principal, category : Text) : async () {
+    // This function should only be called by system admins representing AI agents
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can call this function");
+    };
+    handleBudgetUtilizationInternal(utilizedAmount, participant, category);
   };
 
   // AI Agent Configuration and Monitoring (Admin only)
@@ -694,18 +747,22 @@ actor {
     if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
       Runtime.trap("Unauthorized: Only admins can update AI validation thresholds");
     };
+    // Implementation would update AI thresholds
   };
 
   public shared ({ caller }) func validateBudgetTransaction(participant : Principal, category : Text, amount : Int) : async BudgetValidationResult {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only authenticated users can validate transactions");
     };
+    
     // Plan managers and admins can validate any participant's transactions
-    // Providers can validate for transactions they're involved in
+    // Participants can validate their own transactions
+    // Guardians can validate their ward's transactions
     if (not isPlanManagerOf(caller, participant) and
         not AccessControl.isAdmin(accessControlState, caller) and
-        not isProvider(caller)) {
-      Runtime.trap("Unauthorized: Only plan managers or providers can validate transactions");
+        not (caller == participant and isParticipant(caller)) and
+        not isGuardianOf(caller, participant)) {
+      Runtime.trap("Unauthorized: Only plan managers, participants, or guardians can validate transactions");
     };
 
     if (not isParticipant(participant)) {
@@ -762,5 +819,6 @@ actor {
     if (not isParticipant(participant)) {
       Runtime.trap("Invalid participant");
     };
+    // Implementation would record feedback for AI learning
   };
 };

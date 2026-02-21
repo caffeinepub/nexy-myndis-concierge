@@ -29,7 +29,9 @@ export function useGetCallerUserProfile() {
       return actor.getCallerUserProfile();
     },
     enabled: !!actor && !actorFetching,
-    retry: false,
+    retry: 2,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
   });
 
   return {
@@ -65,7 +67,9 @@ export function useGetCallerUserRole(): UseQueryResult<UserRole, Error> {
       return actor.getCallerUserRole();
     },
     enabled: !!actor && !actorFetching,
-    retry: false,
+    retry: 2,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
   });
 }
 
@@ -162,6 +166,9 @@ export function useGetParticipantPlans(): UseQueryResult<NDISPlan[], Error> {
       return actor.getParticipantPlans(principal);
     },
     enabled: !!actor && !actorFetching,
+    retry: 2,
+    staleTime: 1 * 60 * 1000, // 1 minute
+    gcTime: 10 * 60 * 1000, // 10 minutes
   });
 }
 
@@ -195,6 +202,9 @@ export function useGetAllProviders(): UseQueryResult<ServiceProvider[], Error> {
       }
     },
     enabled: !!actor && !actorFetching,
+    retry: 2,
+    staleTime: 30 * 1000, // 30 seconds
+    gcTime: 10 * 60 * 1000, // 10 minutes
   });
 }
 
@@ -238,6 +248,9 @@ export function useGetParticipantBookings(): UseQueryResult<Booking[], Error> {
       return actor.getParticipantBookings(principal);
     },
     enabled: !!actor && !actorFetching,
+    retry: 2,
+    staleTime: 1 * 60 * 1000, // 1 minute
+    gcTime: 10 * 60 * 1000, // 10 minutes
   });
 }
 
@@ -252,6 +265,9 @@ export function useGetProviderBookings(): UseQueryResult<Booking[], Error> {
       return actor.getProviderBookings(principal);
     },
     enabled: !!actor && !actorFetching,
+    retry: 2,
+    staleTime: 1 * 60 * 1000, // 1 minute
+    gcTime: 10 * 60 * 1000, // 10 minutes
   });
 }
 
@@ -283,6 +299,9 @@ export function useGetParticipantInvoices(): UseQueryResult<Invoice[], Error> {
       return actor.getParticipantInvoices(principal);
     },
     enabled: !!actor && !actorFetching,
+    retry: 2,
+    staleTime: 1 * 60 * 1000, // 1 minute
+    gcTime: 10 * 60 * 1000, // 10 minutes
   });
 }
 
@@ -297,6 +316,9 @@ export function useGetProviderInvoices(): UseQueryResult<Invoice[], Error> {
       return actor.getProviderInvoices(principal);
     },
     enabled: !!actor && !actorFetching,
+    retry: 2,
+    staleTime: 1 * 60 * 1000, // 1 minute
+    gcTime: 10 * 60 * 1000, // 10 minutes
   });
 }
 
@@ -318,17 +340,25 @@ export function useApproveInvoice(): UseMutationResult<void, Error, { participan
 }
 
 // Guardian Queries
-export function useGetGuardian(): UseQueryResult<Guardian, Error> {
+export function useGetGuardian(): UseQueryResult<Guardian | null, Error> {
   const { actor, isFetching: actorFetching } = useActor();
 
-  return useQuery<Guardian, Error>({
+  return useQuery<Guardian | null, Error>({
     queryKey: ['guardian'],
     queryFn: async () => {
-      if (!actor) throw new Error('Actor not available');
-      const principal = (actor as any)._principal;
-      return actor.getGuardian(principal);
+      if (!actor) return null;
+      try {
+        const principal = (actor as any)._principal;
+        return await actor.getGuardian(principal);
+      } catch (error) {
+        console.error('Error fetching guardian:', error);
+        return null;
+      }
     },
     enabled: !!actor && !actorFetching,
+    retry: 1,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
   });
 }
 
@@ -359,6 +389,9 @@ export function useGetParticipantEvidence(): UseQueryResult<EvidenceDocument[], 
       return actor.getParticipantEvidence(principal);
     },
     enabled: !!actor && !actorFetching,
+    retry: 2,
+    staleTime: 1 * 60 * 1000, // 1 minute
+    gcTime: 10 * 60 * 1000, // 10 minutes
   });
 }
 
@@ -374,29 +407,45 @@ export function useValidateBudgetTransaction(): UseMutationResult<BudgetValidati
   });
 }
 
-export function useGetBudgetThresholdAlerts(participant: Principal): UseQueryResult<BudgetThresholdAlert[], Error> {
+export function useGetBudgetThresholdAlerts(participant?: Principal): UseQueryResult<BudgetThresholdAlert[], Error> {
   const { actor, isFetching: actorFetching } = useActor();
 
   return useQuery<BudgetThresholdAlert[], Error>({
-    queryKey: ['budgetThresholdAlerts', participant.toString()],
+    queryKey: ['budgetThresholdAlerts', participant?.toString()],
     queryFn: async () => {
-      if (!actor) return [];
-      return actor.getBudgetThresholdAlerts(participant);
+      if (!actor || !participant) return [];
+      try {
+        return await actor.getBudgetThresholdAlerts(participant);
+      } catch (error) {
+        console.error('Error fetching budget alerts:', error);
+        return [];
+      }
     },
     enabled: !!actor && !actorFetching && !!participant,
+    retry: 1,
+    staleTime: 1 * 60 * 1000, // 1 minute
+    gcTime: 10 * 60 * 1000, // 10 minutes
   });
 }
 
-export function useDetectAnomalies(participant: Principal): UseQueryResult<string[], Error> {
+export function useDetectAnomalies(participant?: Principal): UseQueryResult<string[], Error> {
   const { actor, isFetching: actorFetching } = useActor();
 
   return useQuery<string[], Error>({
-    queryKey: ['anomalies', participant.toString()],
+    queryKey: ['anomalies', participant?.toString()],
     queryFn: async () => {
-      if (!actor) return [];
-      return actor.detectAnomalies(participant);
+      if (!actor || !participant) return [];
+      try {
+        return await actor.detectAnomalies(participant);
+      } catch (error) {
+        console.error('Error detecting anomalies:', error);
+        return [];
+      }
     },
     enabled: !!actor && !actorFetching && !!participant,
+    retry: 1,
+    staleTime: 1 * 60 * 1000, // 1 minute
+    gcTime: 10 * 60 * 1000, // 10 minutes
   });
 }
 
@@ -411,6 +460,9 @@ export function useGetAIAgentMetrics(): UseQueryResult<AIAgentMetrics, Error> {
       return actor.getAIAgentMetrics();
     },
     enabled: !!actor && !actorFetching,
+    retry: 2,
+    staleTime: 1 * 60 * 1000, // 1 minute
+    gcTime: 10 * 60 * 1000, // 10 minutes
   });
 }
 

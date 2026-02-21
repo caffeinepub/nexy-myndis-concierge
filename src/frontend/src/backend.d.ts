@@ -68,6 +68,10 @@ export interface AIAgentMetrics {
     averageProcessingTime: bigint;
     confidenceScores: Array<number>;
 }
+export interface UserApprovalInfo {
+    status: ApprovalStatus;
+    principal: Principal;
+}
 export interface EvidenceDocument {
     id: string;
     provider: Principal;
@@ -111,6 +115,11 @@ export interface ServiceProvider {
     rating?: bigint;
     priceList: Array<[string, bigint]>;
     serviceTypes: Array<string>;
+}
+export enum ApprovalStatus {
+    pending = "pending",
+    approved = "approved",
+    rejected = "rejected"
 }
 export enum BookingStatus {
     cancelled = "cancelled",
@@ -163,13 +172,17 @@ export interface backendInterface {
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     handleBudgetUtilization(utilizedAmount: bigint, participant: Principal, category: string): Promise<void>;
     isCallerAdmin(): Promise<boolean>;
+    isCallerApproved(): Promise<boolean>;
+    listApprovals(): Promise<Array<UserApprovalInfo>>;
     recordValidationFeedback(participant: Principal, transactionId: string, approved: boolean, reason: string): Promise<void>;
     registerGuardian(guardian: Guardian): Promise<void>;
     registerParticipant(participant: Participant): Promise<void>;
     registerPlanManager(planManager: PlanManager): Promise<void>;
     registerServiceProvider(provider: ServiceProvider): Promise<void>;
+    requestApproval(): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     searchProviders(serviceType: string): Promise<Array<string>>;
+    setApproval(user: Principal, status: ApprovalStatus): Promise<void>;
     updateAIValidationThresholds(thresholds: Array<[string, number]>): Promise<void>;
     updateCategorySpending(participant: Principal, category: string, amount: bigint): Promise<void>;
     uploadEvidence(doc: EvidenceDocument): Promise<void>;

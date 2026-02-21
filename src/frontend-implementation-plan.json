@@ -1,73 +1,46 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Fix onboarding tour page scroll functionality after clicking Get Started",
+  "title": "Remove Profile Completion Modal",
   "requirements": [
     {
-      "id": "REQ-95",
-      "summary": "Fix the scroll functionality on the onboarding tour page that occurs after clicking the 'Get Started' button on the landing page",
+      "id": "REQ-1",
+      "summary": "Remove the profile completion modal component and its display logic from the application",
       "acceptanceCriteria": [
-        "After clicking 'Get Started' on the landing page, the onboarding tour page loads without any scroll-blocking behavior",
-        "All content on the WelcomeScreen is vertically scrollable when it exceeds the viewport height",
-        "The page body or container does not have overflow:hidden or fixed positioning preventing scroll",
-        "The OnboardingFlow overlay component allows proper scrolling of its content",
-        "Users can scroll down to view all onboarding content including all four feature cards and the Skip Tour button",
-        "The scroll behavior works correctly on both desktop and mobile viewports"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/onboarding/OnboardingFlow.tsx",
-          "operation": "modify",
-          "description": "Review and fix the wrapper container CSS to ensure it allows vertical scrolling. Remove any fixed positioning, overflow:hidden, or height constraints that prevent scrolling. Ensure the overlay wrapper uses appropriate overflow properties (overflow-auto or overflow-y-auto) and proper height settings (min-h-screen instead of h-screen with overflow-hidden) to enable content scrolling when it exceeds viewport height."
-        },
-        {
-          "path": "frontend/src/components/onboarding/WelcomeScreen.tsx",
-          "operation": "modify",
-          "description": "Review and fix the container CSS to ensure proper height and overflow settings that enable vertical scrolling. Remove any fixed positioning or overflow:hidden styles that block scrolling. Ensure the content wrapper allows natural content flow and scrolling when content exceeds the viewport."
-        }
-      ]
-    },
-    {
-      "id": "REQ-96",
-      "summary": "Inspect the OnboardingFlow and WelcomeScreen components for CSS styles preventing scrolling",
-      "acceptanceCriteria": [
-        "OnboardingFlow wrapper allows scrolling and does not apply fixed positioning that breaks scroll",
-        "WelcomeScreen container has proper height and overflow settings to enable vertical scrolling",
-        "Body scroll lock (if implemented) is removed or properly configured to allow scrolling within the onboarding modal",
-        "All CSS position, overflow, and height properties are reviewed and corrected"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/onboarding/OnboardingFlow.tsx",
-          "operation": "modify",
-          "description": "Audit all CSS classes and inline styles for position:fixed, overflow:hidden, h-screen combined with overflow issues, or z-index problems. Replace problematic styles with scrollable alternatives: use overflow-y-auto for scrollable containers, min-h-screen for full-height layouts that can expand, and relative/absolute positioning only where necessary. Ensure the overlay doesn't lock body scroll unless the modal content itself is scrollable."
-        },
-        {
-          "path": "frontend/src/components/onboarding/WelcomeScreen.tsx",
-          "operation": "modify",
-          "description": "Audit all CSS classes and inline styles for position:fixed, overflow:hidden, max-h or h constraints that prevent natural content expansion, or display:flex without proper overflow handling. Ensure the feature grid and all child elements use natural layout flow that allows vertical scrolling when content exceeds viewport height. Remove any height constraints that clip content."
-        }
-      ]
-    },
-    {
-      "id": "REQ-97",
-      "summary": "Verify that the App.tsx component and router configuration do not inadvertently block scrolling when the onboarding flow is active",
-      "acceptanceCriteria": [
-        "The onboarding flow overlay or modal has scrollable content area if it uses fixed/absolute positioning",
-        "Document body scrolling is preserved or intentionally managed with overflow-auto on modal content containers",
-        "Navigation between onboarding steps maintains scroll functionality",
-        "The scroll issue does not recur when progressing through onboarding screens"
+        "The profile setup modal no longer appears for any user",
+        "Users can access the application without being prompted to complete profile information",
+        "No popup requesting name and email is displayed"
       ],
       "file_operations": [
         {
           "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Review the OnboardingFlow rendering logic and ensure it doesn't apply body scroll locks or overflow:hidden to document.body when the onboarding overlay is displayed. If the onboarding uses a modal overlay pattern with fixed/absolute positioning, ensure the modal content container has overflow-y-auto and proper height constraints. Verify that showing/hiding the onboarding flow doesn't leave the body in a scroll-locked state."
+          "description": "Remove the ProfileSetup modal component import, remove all state and logic related to showing the profile setup modal (including showProfileSetup conditional rendering, profileLoading state, and any useGetCallerUserProfile hook usage that determines modal visibility), and remove the ProfileSetup JSX element from the render tree"
         },
         {
-          "path": "frontend/src/components/onboarding/OnboardingFlow.tsx",
+          "path": "frontend/src/components/auth/ProfileSetup.tsx",
           "operation": "modify",
-          "description": "Ensure that navigation between onboarding steps (next/previous/skip) preserves scroll functionality and resets scroll position appropriately. Verify that step transitions don't introduce temporary scroll locks or position changes that break scrolling. Test that all four onboarding screens (Welcome, NDIS Basics, Feature Demo, Completion) maintain consistent scroll behavior."
+          "description": "Add a comment at the top of the file indicating this component is no longer actively used in the main application flow but is preserved for potential future use or reference"
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Remove conditional logic that triggers profile completion based on missing user profile data",
+      "acceptanceCriteria": [
+        "Application flow no longer checks for or enforces profile completion",
+        "User can navigate freely without profile setup interruptions"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Remove any conditional logic that checks userProfile === null or !userProfile to determine whether to show the profile setup modal. Remove the useGetCallerUserProfile hook call if it's only used for profile setup modal logic. Ensure the main application routing and dashboard access are not gated by profile completion checks"
+        },
+        {
+          "path": "frontend/src/pages/LandingPage.tsx",
+          "operation": "modify",
+          "description": "Review and remove any profile completion checks that might redirect users or block navigation based on missing profile data. Ensure authenticated users can navigate to their role-based dashboards without profile setup interruptions"
         }
       ]
     }

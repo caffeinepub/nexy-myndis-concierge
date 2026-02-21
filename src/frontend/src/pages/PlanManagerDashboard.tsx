@@ -1,13 +1,34 @@
 import { useGetParticipantInvoices } from '../hooks/useQueries';
+import { useInternetIdentity } from '../hooks/useInternetIdentity';
+import { useNavigate } from '@tanstack/react-router';
+import { useEffect } from 'react';
 import PageLayout from '../components/layout/PageLayout';
+import LoadingState from '../components/common/LoadingState';
 import { Users, DollarSign, FileCheck, AlertCircle } from 'lucide-react';
 
 export default function PlanManagerDashboard() {
-  const { data: invoices = [] } = useGetParticipantInvoices();
+  const { identity } = useInternetIdentity();
+  const navigate = useNavigate();
+  const { data: invoices = [], isLoading } = useGetParticipantInvoices();
+
+  // Redirect to get-started if not authenticated
+  useEffect(() => {
+    if (!identity) {
+      navigate({ to: '/get-started' });
+    }
+  }, [identity, navigate]);
 
   // Count invoices by status
   const pendingInvoices = invoices.filter(inv => inv.status === 'pending').length;
   const flaggedInvoices = 0; // Will be populated when AI validation is integrated
+
+  if (isLoading) {
+    return (
+      <PageLayout title="Plan Manager Dashboard">
+        <LoadingState message="Loading your dashboard..." />
+      </PageLayout>
+    );
+  }
 
   return (
     <PageLayout title="Plan Manager Dashboard">
@@ -25,7 +46,7 @@ export default function PlanManagerDashboard() {
           <div className="w-14 h-14 bg-[#e0f2f1] rounded-xl flex items-center justify-center mb-5">
             <Users className="w-7 h-7 text-[#0d7377]" />
           </div>
-          <div className="text-3xl font-bold text-[#1a1a2e] mb-2">45</div>
+          <div className="text-3xl font-bold text-[#1a1a2e] mb-2">0</div>
           <div className="text-sm text-[#616161] font-medium">Managed Participants</div>
         </div>
 
@@ -33,7 +54,7 @@ export default function PlanManagerDashboard() {
           <div className="w-14 h-14 bg-[#e0f2f1] rounded-xl flex items-center justify-center mb-5">
             <DollarSign className="w-7 h-7 text-[#0d7377]" />
           </div>
-          <div className="text-3xl font-bold text-[#1a1a2e] mb-2">$2.1M</div>
+          <div className="text-3xl font-bold text-[#1a1a2e] mb-2">$0</div>
           <div className="text-sm text-[#616161] font-medium">Total Budgets</div>
         </div>
 
@@ -41,7 +62,7 @@ export default function PlanManagerDashboard() {
           <div className="w-14 h-14 bg-[#e0f2f1] rounded-xl flex items-center justify-center mb-5">
             <FileCheck className="w-7 h-7 text-[#0d7377]" />
           </div>
-          <div className="text-3xl font-bold text-[#1a1a2e] mb-2">98%</div>
+          <div className="text-3xl font-bold text-[#1a1a2e] mb-2">100%</div>
           <div className="text-sm text-[#616161] font-medium">Compliance Rate</div>
         </div>
 

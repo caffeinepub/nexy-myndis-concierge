@@ -1,17 +1,38 @@
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
-import { useDetectAnomalies } from '../hooks/useQueries';
+import { useDetectAnomalies, useGetProviderBookings, useGetProviderInvoices } from '../hooks/useQueries';
+import { useNavigate } from '@tanstack/react-router';
+import { useEffect } from 'react';
 import PageLayout from '../components/layout/PageLayout';
 import AnomalyWarningBanner from '../components/provider/AnomalyWarningBanner';
+import LoadingState from '../components/common/LoadingState';
 import { DollarSign, Calendar, Star, TrendingUp, AlertTriangle } from 'lucide-react';
 
 export default function ProviderDashboard() {
   const { identity } = useInternetIdentity();
+  const navigate = useNavigate();
   
-  // Only fetch anomalies if identity is available
+  // Only fetch data if identity is available
   const providerPrincipal = identity?.getPrincipal();
-  const { data: anomalies = [] } = useDetectAnomalies(providerPrincipal!);
+  const { data: anomalies = [], isLoading: anomaliesLoading } = useDetectAnomalies(providerPrincipal);
+  const { data: bookings = [], isLoading: bookingsLoading } = useGetProviderBookings();
+  const { data: invoices = [], isLoading: invoicesLoading } = useGetProviderInvoices();
+
+  // Redirect to get-started if not authenticated
+  useEffect(() => {
+    if (!identity) {
+      navigate({ to: '/get-started' });
+    }
+  }, [identity, navigate]);
 
   const flaggedInvoicesCount = anomalies.length;
+
+  if (anomaliesLoading || bookingsLoading || invoicesLoading) {
+    return (
+      <PageLayout title="Provider Dashboard">
+        <LoadingState message="Loading your dashboard..." />
+      </PageLayout>
+    );
+  }
 
   return (
     <PageLayout title="Provider Dashboard">
@@ -34,7 +55,7 @@ export default function ProviderDashboard() {
           <div className="w-14 h-14 bg-[#e0f2f1] rounded-xl flex items-center justify-center mb-5">
             <Calendar className="w-7 h-7 text-[#0d7377]" />
           </div>
-          <div className="text-3xl font-bold text-[#1a1a2e] mb-2">12</div>
+          <div className="text-3xl font-bold text-[#1a1a2e] mb-2">{bookings.length}</div>
           <div className="text-sm text-[#616161] font-medium">Bookings This Week</div>
         </div>
 
@@ -42,7 +63,9 @@ export default function ProviderDashboard() {
           <div className="w-14 h-14 bg-[#e0f2f1] rounded-xl flex items-center justify-center mb-5">
             <DollarSign className="w-7 h-7 text-[#0d7377]" />
           </div>
-          <div className="text-3xl font-bold text-[#1a1a2e] mb-2">$8,500</div>
+          <div className="text-3xl font-bold text-[#1a1a2e] mb-2">
+            ${invoices.reduce((sum, inv) => sum + Number(inv.totalAmount), 0).toLocaleString()}
+          </div>
           <div className="text-sm text-[#616161] font-medium">Revenue This Month</div>
         </div>
 
@@ -70,7 +93,11 @@ export default function ProviderDashboard() {
             <Calendar className="w-6 h-6 text-[#0d7377]" />
             Upcoming Appointments
           </h2>
-          <p className="text-[#616161]">Appointment management features coming soon...</p>
+          <p className="text-[#616161]">
+            {bookings.length > 0 
+              ? `${bookings.length} booking${bookings.length > 1 ? 's' : ''} scheduled` 
+              : 'No upcoming appointments'}
+          </p>
         </div>
 
         <div className="bg-white rounded-2xl p-8 shadow-md border border-[#eeeeee]">
@@ -78,7 +105,11 @@ export default function ProviderDashboard() {
             <DollarSign className="w-6 h-6 text-[#0d7377]" />
             Recent Invoices
           </h2>
-          <p className="text-[#616161]">Invoice management features coming soon...</p>
+          <p className="text-[#616161]">
+            {invoices.length > 0 
+              ? `${invoices.length} invoice${invoices.length > 1 ? 's' : ''} created` 
+              : 'No invoices yet'}
+          </p>
         </div>
       </div>
     </PageLayout>

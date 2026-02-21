@@ -125,6 +125,15 @@ export const EvidenceDocument = IDL.Record({
   'category' : IDL.Text,
 });
 export const PlanManager = IDL.Record({ 'provider' : IDL.Principal });
+export const ApprovalStatus = IDL.Variant({
+  'pending' : IDL.Null,
+  'approved' : IDL.Null,
+  'rejected' : IDL.Null,
+});
+export const UserApprovalInfo = IDL.Record({
+  'status' : ApprovalStatus,
+  'principal' : IDL.Principal,
+});
 export const BudgetValidationResult = IDL.Record({
   'reasons' : IDL.Vec(IDL.Text),
   'valid' : IDL.Bool,
@@ -230,6 +239,8 @@ export const idlService = IDL.Service({
       [],
     ),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'isCallerApproved' : IDL.Func([], [IDL.Bool], ['query']),
+  'listApprovals' : IDL.Func([], [IDL.Vec(UserApprovalInfo)], ['query']),
   'recordValidationFeedback' : IDL.Func(
       [IDL.Principal, IDL.Text, IDL.Bool, IDL.Text],
       [],
@@ -239,8 +250,10 @@ export const idlService = IDL.Service({
   'registerParticipant' : IDL.Func([Participant], [], []),
   'registerPlanManager' : IDL.Func([PlanManager], [], []),
   'registerServiceProvider' : IDL.Func([ServiceProvider], [], []),
+  'requestApproval' : IDL.Func([], [], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
   'searchProviders' : IDL.Func([IDL.Text], [IDL.Vec(IDL.Text)], ['query']),
+  'setApproval' : IDL.Func([IDL.Principal, ApprovalStatus], [], []),
   'updateAIValidationThresholds' : IDL.Func(
       [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Float64))],
       [],
@@ -381,6 +394,15 @@ export const idlFactory = ({ IDL }) => {
     'category' : IDL.Text,
   });
   const PlanManager = IDL.Record({ 'provider' : IDL.Principal });
+  const ApprovalStatus = IDL.Variant({
+    'pending' : IDL.Null,
+    'approved' : IDL.Null,
+    'rejected' : IDL.Null,
+  });
+  const UserApprovalInfo = IDL.Record({
+    'status' : ApprovalStatus,
+    'principal' : IDL.Principal,
+  });
   const BudgetValidationResult = IDL.Record({
     'reasons' : IDL.Vec(IDL.Text),
     'valid' : IDL.Bool,
@@ -486,6 +508,8 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'isCallerApproved' : IDL.Func([], [IDL.Bool], ['query']),
+    'listApprovals' : IDL.Func([], [IDL.Vec(UserApprovalInfo)], ['query']),
     'recordValidationFeedback' : IDL.Func(
         [IDL.Principal, IDL.Text, IDL.Bool, IDL.Text],
         [],
@@ -495,8 +519,10 @@ export const idlFactory = ({ IDL }) => {
     'registerParticipant' : IDL.Func([Participant], [], []),
     'registerPlanManager' : IDL.Func([PlanManager], [], []),
     'registerServiceProvider' : IDL.Func([ServiceProvider], [], []),
+    'requestApproval' : IDL.Func([], [], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
     'searchProviders' : IDL.Func([IDL.Text], [IDL.Vec(IDL.Text)], ['query']),
+    'setApproval' : IDL.Func([IDL.Principal, ApprovalStatus], [], []),
     'updateAIValidationThresholds' : IDL.Func(
         [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Float64))],
         [],

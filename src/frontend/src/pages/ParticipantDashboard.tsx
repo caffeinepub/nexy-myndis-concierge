@@ -1,5 +1,7 @@
 import { useGetParticipantPlans, useGetParticipantBookings } from '../hooks/useQueries';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
+import { useNavigate } from '@tanstack/react-router';
+import { useEffect } from 'react';
 import PageLayout from '../components/layout/PageLayout';
 import PlanOverviewCard from '../components/participant/PlanOverviewCard';
 import BudgetSummaryCard from '../components/participant/BudgetSummaryCard';
@@ -10,9 +12,17 @@ import LoadingState from '../components/common/LoadingState';
 import { TrendingUp, DollarSign, Target, Calendar } from 'lucide-react';
 
 export default function ParticipantDashboard() {
-  const { data: plans, isLoading: plansLoading } = useGetParticipantPlans();
-  const { data: bookings, isLoading: bookingsLoading } = useGetParticipantBookings();
   const { identity } = useInternetIdentity();
+  const navigate = useNavigate();
+  const { data: plans, isLoading: plansLoading, error: plansError } = useGetParticipantPlans();
+  const { data: bookings, isLoading: bookingsLoading } = useGetParticipantBookings();
+
+  // Redirect to get-started if not authenticated
+  useEffect(() => {
+    if (!identity) {
+      navigate({ to: '/get-started' });
+    }
+  }, [identity, navigate]);
 
   const activePlan = plans?.find(p => p.status === 'active');
 
@@ -20,6 +30,30 @@ export default function ParticipantDashboard() {
   const totalBudget = activePlan ? activePlan.categories.reduce((sum, [, cat]) => sum + Number(cat.amount), 0) : 0;
   const totalSpent = activePlan ? activePlan.categories.reduce((sum, [, cat]) => sum + Number(cat.spent), 0) : 0;
   const remainingBudget = totalBudget - totalSpent;
+
+  if (plansLoading) {
+    return (
+      <PageLayout title="Dashboard">
+        <LoadingState message="Loading your dashboard..." />
+      </PageLayout>
+    );
+  }
+
+  if (plansError) {
+    return (
+      <PageLayout title="Dashboard">
+        <div className="flex flex-col items-center justify-center py-12">
+          <p className="text-destructive mb-4">Error loading dashboard data</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
+          >
+            Retry
+          </button>
+        </div>
+      </PageLayout>
+    );
+  }
 
   return (
     <PageLayout title="Dashboard">
@@ -36,67 +70,61 @@ export default function ParticipantDashboard() {
         </div>
       </div>
 
-      {plansLoading ? (
-        <LoadingState message="Loading your dashboard..." />
-      ) : (
-        <>
-          {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            <div className="bg-card rounded-2xl p-8 shadow-layer-2 border border-border transition-smooth hover:-translate-y-1 hover:shadow-layer-3 bg-gradient-to-br from-primary/5 to-transparent">
-              <div className="w-14 h-14 bg-gradient-to-br from-primary/20 to-success/20 rounded-xl flex items-center justify-center mb-5">
-                <DollarSign className="w-7 h-7 text-primary" />
-              </div>
-              <div className="text-3xl font-bold text-foreground mb-2">
-                ${totalBudget.toLocaleString()}
-              </div>
-              <div className="text-sm text-muted-foreground font-medium">Total Budget</div>
-            </div>
-
-            <div className="bg-card rounded-2xl p-8 shadow-layer-2 border border-border transition-smooth hover:-translate-y-1 hover:shadow-layer-3 bg-gradient-to-br from-success/5 to-transparent">
-              <div className="w-14 h-14 bg-gradient-to-br from-success/20 to-primary/20 rounded-xl flex items-center justify-center mb-5">
-                <TrendingUp className="w-7 h-7 text-success" />
-              </div>
-              <div className="text-3xl font-bold text-foreground mb-2">
-                ${totalSpent.toLocaleString()}
-              </div>
-              <div className="text-sm text-muted-foreground font-medium">Total Spent</div>
-            </div>
-
-            <div className="bg-card rounded-2xl p-8 shadow-layer-2 border border-border transition-smooth hover:-translate-y-1 hover:shadow-layer-3 bg-gradient-to-br from-primary/5 to-transparent">
-              <div className="w-14 h-14 bg-gradient-to-br from-primary/20 to-success/20 rounded-xl flex items-center justify-center mb-5">
-                <Target className="w-7 h-7 text-primary" />
-              </div>
-              <div className="text-3xl font-bold text-foreground mb-2">
-                {activePlan?.goals.length || 0}
-              </div>
-              <div className="text-sm text-muted-foreground font-medium">Active Goals</div>
-            </div>
-
-            <div className="bg-card rounded-2xl p-8 shadow-layer-2 border border-border transition-smooth hover:-translate-y-1 hover:shadow-layer-3 bg-gradient-to-br from-success/5 to-transparent">
-              <div className="w-14 h-14 bg-gradient-to-br from-success/20 to-primary/20 rounded-xl flex items-center justify-center mb-5">
-                <Calendar className="w-7 h-7 text-success" />
-              </div>
-              <div className="text-3xl font-bold text-foreground mb-2">
-                {bookings?.length || 0}
-              </div>
-              <div className="text-sm text-muted-foreground font-medium">Upcoming Bookings</div>
-            </div>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div className="bg-card rounded-2xl p-8 shadow-layer-2 border border-border transition-smooth hover:-translate-y-1 hover:shadow-layer-3 bg-gradient-to-br from-primary/5 to-transparent">
+          <div className="w-14 h-14 bg-gradient-to-br from-primary/20 to-success/20 rounded-xl flex items-center justify-center mb-5">
+            <DollarSign className="w-7 h-7 text-primary" />
           </div>
-
-          {/* Main Content */}
-          <div className="grid gap-8 lg:grid-cols-3">
-            <div className="lg:col-span-2 space-y-8">
-              <PlanOverviewCard plan={activePlan} />
-              <BudgetSummaryCard plan={activePlan} />
-            </div>
-            <div className="space-y-8">
-              {identity && <BudgetHealthIndicator participant={identity.getPrincipal()} />}
-              <GoalProgressCard plan={activePlan} />
-              <UpcomingBookingsCard bookings={bookings || []} isLoading={bookingsLoading} />
-            </div>
+          <div className="text-3xl font-bold text-foreground mb-2">
+            ${totalBudget.toLocaleString()}
           </div>
-        </>
-      )}
+          <div className="text-sm text-muted-foreground font-medium">Total Budget</div>
+        </div>
+
+        <div className="bg-card rounded-2xl p-8 shadow-layer-2 border border-border transition-smooth hover:-translate-y-1 hover:shadow-layer-3 bg-gradient-to-br from-success/5 to-transparent">
+          <div className="w-14 h-14 bg-gradient-to-br from-success/20 to-primary/20 rounded-xl flex items-center justify-center mb-5">
+            <TrendingUp className="w-7 h-7 text-success" />
+          </div>
+          <div className="text-3xl font-bold text-foreground mb-2">
+            ${totalSpent.toLocaleString()}
+          </div>
+          <div className="text-sm text-muted-foreground font-medium">Total Spent</div>
+        </div>
+
+        <div className="bg-card rounded-2xl p-8 shadow-layer-2 border border-border transition-smooth hover:-translate-y-1 hover:shadow-layer-3 bg-gradient-to-br from-primary/5 to-transparent">
+          <div className="w-14 h-14 bg-gradient-to-br from-primary/20 to-success/20 rounded-xl flex items-center justify-center mb-5">
+            <Target className="w-7 h-7 text-primary" />
+          </div>
+          <div className="text-3xl font-bold text-foreground mb-2">
+            {activePlan?.goals.length || 0}
+          </div>
+          <div className="text-sm text-muted-foreground font-medium">Active Goals</div>
+        </div>
+
+        <div className="bg-card rounded-2xl p-8 shadow-layer-2 border border-border transition-smooth hover:-translate-y-1 hover:shadow-layer-3 bg-gradient-to-br from-success/5 to-transparent">
+          <div className="w-14 h-14 bg-gradient-to-br from-success/20 to-primary/20 rounded-xl flex items-center justify-center mb-5">
+            <Calendar className="w-7 h-7 text-success" />
+          </div>
+          <div className="text-3xl font-bold text-foreground mb-2">
+            {bookings?.length || 0}
+          </div>
+          <div className="text-sm text-muted-foreground font-medium">Upcoming Bookings</div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="grid gap-8 lg:grid-cols-3">
+        <div className="lg:col-span-2 space-y-8">
+          <PlanOverviewCard plan={activePlan} />
+          <BudgetSummaryCard plan={activePlan} />
+        </div>
+        <div className="space-y-8">
+          {identity && <BudgetHealthIndicator participant={identity.getPrincipal()} />}
+          <GoalProgressCard plan={activePlan} />
+          <UpcomingBookingsCard bookings={bookings || []} isLoading={bookingsLoading} />
+        </div>
+      </div>
     </PageLayout>
   );
 }
