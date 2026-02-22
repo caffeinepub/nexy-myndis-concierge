@@ -1,126 +1,145 @@
-import { useGetGuardian, useGetBudgetThresholdAlerts } from '../hooks/useQueries';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
+import { useGetCallerUserProfile } from '../hooks/useQueries';
 import { useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
-import BudgetHealthIndicator from '../components/participant/BudgetHealthIndicator';
-import AIRiskAssessmentCard from '../components/guardian/AIRiskAssessmentCard';
+import PageLayout from '../components/layout/PageLayout';
 import AIBudgetPredictions from '../components/guardian/AIBudgetPredictions';
 import AIPriorityParticipants from '../components/guardian/AIPriorityParticipants';
-import PageLayout from '../components/layout/PageLayout';
+import AIRiskAssessmentCard from '../components/guardian/AIRiskAssessmentCard';
 import LoadingState from '../components/common/LoadingState';
-import { Users, TrendingUp, Calendar, AlertCircle, Brain } from 'lucide-react';
+import { Users, TrendingUp, AlertTriangle, CheckCircle } from 'lucide-react';
 
 export default function GuardianDashboard() {
   const { identity } = useInternetIdentity();
   const navigate = useNavigate();
-  const { data: guardian, isLoading: guardianLoading, error: guardianError } = useGetGuardian();
-  
-  // Only fetch alerts if guardian data is available
-  const participantPrincipal = guardian?.participant;
-  const { data: alerts = [] } = useGetBudgetThresholdAlerts(participantPrincipal);
+  const { data: userProfile, isLoading: profileLoading } = useGetCallerUserProfile();
 
-  // Redirect to get-started if not authenticated
   useEffect(() => {
     if (!identity) {
-      navigate({ to: '/get-started' });
+      navigate({ to: '/' });
     }
   }, [identity, navigate]);
 
-  const participantsWithWarnings = alerts.length > 0 ? 1 : 0;
-  const aiInsightsCount = 5;
+  if (!identity) {
+    return null;
+  }
 
-  if (guardianLoading) {
+  if (profileLoading) {
     return (
-      <PageLayout title="Guardian Dashboard">
-        <LoadingState message="Loading guardian dashboard..." />
+      <PageLayout title="Dashboard">
+        <LoadingState message="Loading your dashboard..." />
       </PageLayout>
     );
   }
 
-  if (guardianError) {
-    return (
-      <PageLayout title="Guardian Dashboard">
-        <div className="flex flex-col items-center justify-center py-12">
-          <p className="text-destructive mb-4">Error loading guardian data</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
-          >
-            Retry
-          </button>
-        </div>
-      </PageLayout>
-    );
-  }
+  // Mock data for managed participants
+  const managedParticipants = [
+    { name: 'Kamau Kariuki', status: 'active', budgetUsed: 68, location: 'Nairobi' },
+    { name: 'Njoki Wambui', status: 'active', budgetUsed: 45, location: 'Mombasa' },
+    { name: 'Kipchoge Mutai', status: 'active', budgetUsed: 82, location: 'Kisumu' },
+  ];
 
   return (
     <PageLayout title="Guardian Dashboard">
-      {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-[#0d7377] to-[#1a1a2e] rounded-3xl p-12 text-white mb-12">
-        <h1 className="text-4xl font-bold mb-4">Guardian Dashboard</h1>
-        <p className="text-lg opacity-90">
-          Manage and coordinate care for your participants with AI-powered insights
-        </p>
-      </div>
+      <div className="max-w-7xl mx-auto">
+        {/* Welcome Section */}
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-foreground mb-2">
+            Guardian Dashboard
+          </h1>
+          <p className="text-lg text-muted-foreground">
+            Welcome back, {userProfile?.name || 'Guardian'}! Manage and monitor your participants
+          </p>
+        </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-        <div className="bg-white rounded-2xl p-8 shadow-md border border-[#eeeeee]">
-          <div className="w-14 h-14 bg-[#e0f2f1] rounded-xl flex items-center justify-center mb-5">
-            <Users className="w-7 h-7 text-[#0d7377]" />
+        {/* Stats Overview */}
+        <div className="grid gap-6 md:grid-cols-4 mb-8">
+          <div className="bg-card rounded-2xl p-6 shadow-layer-2 border border-border">
+            <div className="flex items-center justify-between mb-2">
+              <Users className="w-8 h-8 text-primary" />
+            </div>
+            <div className="text-3xl font-bold text-foreground mb-1">
+              {managedParticipants.length}
+            </div>
+            <div className="text-sm text-muted-foreground">Managed Participants</div>
           </div>
-          <div className="text-3xl font-bold text-[#1a1a2e] mb-2">1</div>
-          <div className="text-sm text-[#616161] font-medium">Participants</div>
-        </div>
 
-        <div className="bg-white rounded-2xl p-8 shadow-md border border-[#eeeeee]">
-          <div className="w-14 h-14 bg-[#e0f2f1] rounded-xl flex items-center justify-center mb-5">
-            <Brain className="w-7 h-7 text-[#0d7377]" />
+          <div className="bg-card rounded-2xl p-6 shadow-layer-2 border border-border">
+            <div className="flex items-center justify-between mb-2">
+              <TrendingUp className="w-8 h-8 text-success" />
+            </div>
+            <div className="text-3xl font-bold text-foreground mb-1">65%</div>
+            <div className="text-sm text-muted-foreground">Avg Budget Used</div>
           </div>
-          <div className="text-3xl font-bold text-[#1a1a2e] mb-2">{aiInsightsCount}</div>
-          <div className="text-sm text-[#616161] font-medium">AI Insights</div>
-        </div>
 
-        <div className="bg-white rounded-2xl p-8 shadow-md border border-[#eeeeee]">
-          <div className="w-14 h-14 bg-[#e0f2f1] rounded-xl flex items-center justify-center mb-5">
-            <Calendar className="w-7 h-7 text-[#0d7377]" />
+          <div className="bg-card rounded-2xl p-6 shadow-layer-2 border border-border">
+            <div className="flex items-center justify-between mb-2">
+              <AlertTriangle className="w-8 h-8 text-warning" />
+            </div>
+            <div className="text-3xl font-bold text-foreground mb-1">1</div>
+            <div className="text-sm text-muted-foreground">Priority Alert</div>
           </div>
-          <div className="text-3xl font-bold text-[#1a1a2e] mb-2">0</div>
-          <div className="text-sm text-[#616161] font-medium">Upcoming Bookings</div>
-        </div>
 
-        <div className="bg-white rounded-2xl p-8 shadow-md border border-[#eeeeee]">
-          <div className="w-14 h-14 bg-[#fff3e0] rounded-xl flex items-center justify-center mb-5">
-            <AlertCircle className="w-7 h-7 text-[#ff9800]" />
+          <div className="bg-card rounded-2xl p-6 shadow-layer-2 border border-border">
+            <div className="flex items-center justify-between mb-2">
+              <CheckCircle className="w-8 h-8 text-success" />
+            </div>
+            <div className="text-3xl font-bold text-foreground mb-1">12</div>
+            <div className="text-sm text-muted-foreground">Completed Goals</div>
           </div>
-          <div className="text-3xl font-bold text-[#1a1a2e] mb-2">{participantsWithWarnings}</div>
-          <div className="text-sm text-[#616161] font-medium">Budget Warnings</div>
-        </div>
-      </div>
-
-      {/* AI Insights Section */}
-      <div className="grid gap-8 lg:grid-cols-2 mb-8">
-        <AIRiskAssessmentCard />
-        <AIBudgetPredictions />
-      </div>
-
-      <div className="mb-8">
-        <AIPriorityParticipants />
-      </div>
-
-      {/* Content Cards */}
-      <div className="grid gap-8 lg:grid-cols-2">
-        <div className="bg-white rounded-2xl p-8 shadow-md border border-[#eeeeee]">
-          <h2 className="text-xl font-bold text-[#1a1a2e] mb-6 flex items-center gap-3">
-            <Users className="w-6 h-6 text-[#0d7377]" />
-            Participants Overview
-          </h2>
-          <p className="text-[#616161]">Participant management features coming soon...</p>
         </div>
 
-        {guardian && guardian.participant && (
-          <BudgetHealthIndicator participant={guardian.participant} />
-        )}
+        {/* Managed Participants */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-foreground mb-4">Managed Participants</h2>
+          <div className="grid gap-4">
+            {managedParticipants.map((participant, index) => (
+              <div
+                key={index}
+                className="bg-card rounded-2xl p-6 shadow-layer-2 border border-border hover:shadow-layer-3 transition-all"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground mb-1">
+                      {participant.name}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">{participant.location}</p>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-2xl font-bold text-foreground mb-1">
+                      {participant.budgetUsed}%
+                    </div>
+                    <div className="text-sm text-muted-foreground">Budget Used</div>
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <div className="w-full bg-muted rounded-full h-2">
+                    <div
+                      className={`h-2 rounded-full ${
+                        participant.budgetUsed > 80
+                          ? 'bg-destructive'
+                          : participant.budgetUsed > 60
+                          ? 'bg-warning'
+                          : 'bg-success'
+                      }`}
+                      style={{ width: `${participant.budgetUsed}%` }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* AI Components */}
+        <div className="grid gap-6 lg:grid-cols-2 mb-8">
+          <AIBudgetPredictions />
+          <AIPriorityParticipants />
+        </div>
+
+        <div className="mb-8">
+          <AIRiskAssessmentCard />
+        </div>
       </div>
     </PageLayout>
   );

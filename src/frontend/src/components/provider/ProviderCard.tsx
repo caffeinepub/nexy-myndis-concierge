@@ -1,4 +1,4 @@
-import { Star, MapPin, Calendar, ArrowRight } from 'lucide-react';
+import { Star, MapPin, Phone, Calendar, ArrowRight } from 'lucide-react';
 import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -15,6 +15,8 @@ interface ServiceProvider {
   availability: any[];
   priceList: any[];
   rating?: number;
+  location?: string;
+  phone?: string;
 }
 
 interface ProviderCardProps {
@@ -66,6 +68,23 @@ export default function ProviderCard({ provider }: ProviderCardProps) {
           </Badge>
         ))}
       </div>
+
+      {(provider.location || provider.phone) && (
+        <div className="flex flex-wrap gap-4 mb-4 text-sm text-muted-foreground">
+          {provider.location && (
+            <div className="flex items-center gap-1">
+              <MapPin className="w-4 h-4" />
+              <span>{provider.location}</span>
+            </div>
+          )}
+          {provider.phone && (
+            <div className="flex items-center gap-1">
+              <Phone className="w-4 h-4" />
+              <span>{provider.phone}</span>
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="flex items-center justify-between pt-4 border-t border-border">
         <div className="flex items-center gap-4 text-sm text-muted-foreground">

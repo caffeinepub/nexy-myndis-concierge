@@ -20,13 +20,15 @@ interface ServiceProvider {
   availability: any[];
   priceList: any[];
   rating?: number;
+  location: string;
+  phone: string;
 }
 
-// Mock providers data
+// Mock providers data - Kenyan localized
 const mockProviders: ServiceProvider[] = [
   {
     principal: { toString: () => 'provider-1' } as Principal,
-    name: 'Sarah Thompson',
+    name: 'Wanjiku Mwangi',
     abn: '12345678901',
     ndisVerified: true,
     serviceTypes: ['Occupational Therapy'],
@@ -34,10 +36,12 @@ const mockProviders: ServiceProvider[] = [
     availability: [],
     priceList: [],
     rating: 5,
+    location: 'Westlands, Nairobi',
+    phone: '+254 722 345 678',
   },
   {
     principal: { toString: () => 'provider-2' } as Principal,
-    name: 'Melbourne Physio Care',
+    name: 'Nairobi Physio Care',
     abn: '98765432109',
     ndisVerified: true,
     serviceTypes: ['Physiotherapy'],
@@ -45,10 +49,12 @@ const mockProviders: ServiceProvider[] = [
     availability: [],
     priceList: [],
     rating: 4,
+    location: 'Kilimani, Nairobi',
+    phone: '+254 733 456 789',
   },
   {
     principal: { toString: () => 'provider-3' } as Principal,
-    name: 'Community Connect Services',
+    name: 'Community Connect Kenya',
     abn: '55566677788',
     ndisVerified: true,
     serviceTypes: ['Social Participation', 'Community Access'],
@@ -56,6 +62,34 @@ const mockProviders: ServiceProvider[] = [
     availability: [],
     priceList: [],
     rating: 5,
+    location: 'Nyali, Mombasa',
+    phone: '+254 711 234 567',
+  },
+  {
+    principal: { toString: () => 'provider-4' } as Principal,
+    name: 'Ochieng Otieno',
+    abn: '44455566677',
+    ndisVerified: true,
+    serviceTypes: ['Speech Therapy'],
+    summary: 'Specialized speech and language therapy services',
+    availability: [],
+    priceList: [],
+    rating: 5,
+    location: 'Nakuru',
+    phone: '+254 720 987 654',
+  },
+  {
+    principal: { toString: () => 'provider-5' } as Principal,
+    name: 'Kisumu Wellness Center',
+    abn: '33344455566',
+    ndisVerified: true,
+    serviceTypes: ['Physiotherapy', 'Occupational Therapy'],
+    summary: 'Comprehensive rehabilitation and therapy services',
+    availability: [],
+    priceList: [],
+    rating: 4,
+    location: 'Kisumu',
+    phone: '+254 712 345 678',
   },
 ];
 
@@ -68,7 +102,8 @@ export default function ProvidersPage() {
 
   const filteredProviders = providers.filter(provider => {
     const matchesSearch = provider.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         provider.summary.toLowerCase().includes(searchQuery.toLowerCase());
+                         provider.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         provider.location.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesService = !selectedService || provider.serviceTypes.includes(selectedService);
     return matchesSearch && matchesService;
   });
@@ -151,7 +186,7 @@ export default function ProvidersPage() {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <Input
                 type="text"
-                placeholder="Search providers by name or specialty..."
+                placeholder="Search providers by name, specialty, or location..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-12 h-14 text-base"

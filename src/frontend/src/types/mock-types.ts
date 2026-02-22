@@ -1,4 +1,4 @@
-// Mock types for features not yet implemented in backend
+// Mock types for features not yet implemented in backend - Kenyan localized
 import type { Principal } from '@icp-sdk/core/principal';
 
 export interface NDISPlan {
@@ -25,6 +25,7 @@ export interface Booking {
   timeSlot: TimeSlot;
   status: 'pending' | 'confirmed' | 'cancelled';
   price: bigint;
+  location?: string;
 }
 
 export interface TimeSlot {

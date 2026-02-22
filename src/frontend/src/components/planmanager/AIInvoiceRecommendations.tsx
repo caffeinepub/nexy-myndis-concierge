@@ -6,6 +6,12 @@ import { generateInvoiceRecommendations } from '../../utils/fakeAIData';
 export default function AIInvoiceRecommendations() {
   const recommendations = generateInvoiceRecommendations();
 
+  const getActionLabel = (action: string) => {
+    if (action === 'approve') return 'Approve Invoice';
+    if (action === 'request_info') return 'Request Information';
+    return 'Review';
+  };
+
   return (
     <Card className="shadow-layer-2">
       <CardHeader>
@@ -21,7 +27,8 @@ export default function AIInvoiceRecommendations() {
               <div className="flex items-start gap-3">
                 <FileText className="w-5 h-5 text-primary mt-0.5" />
                 <div>
-                  <h4 className="font-semibold text-foreground">{rec.invoiceNumber}</h4>
+                  <h4 className="font-semibold text-foreground">{rec.participant}</h4>
+                  <p className="text-sm text-muted-foreground mb-1">{rec.amount}</p>
                   <p className="text-sm text-muted-foreground">{rec.reason}</p>
                 </div>
               </div>
@@ -31,7 +38,7 @@ export default function AIInvoiceRecommendations() {
               </div>
             </div>
             <Button variant="default" size="sm" className="w-full">
-              {rec.action}
+              {getActionLabel(rec.action)}
             </Button>
           </div>
         ))}

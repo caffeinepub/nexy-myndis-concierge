@@ -6,15 +6,16 @@ import { generateServiceSuggestions } from '../../utils/fakeAIData';
 export default function AIServiceSuggestions() {
   const suggestions = generateServiceSuggestions();
 
-  const getBudgetFitColor = (fit: string) => {
-    switch (fit) {
-      case 'Excellent':
-        return 'text-success';
-      case 'Good':
-        return 'text-primary';
-      default:
-        return 'text-warning';
-    }
+  const getBudgetFitColor = (fit: number) => {
+    if (fit >= 90) return 'text-success';
+    if (fit >= 75) return 'text-primary';
+    return 'text-warning';
+  };
+
+  const getBudgetFitLabel = (fit: number) => {
+    if (fit >= 90) return 'Excellent';
+    if (fit >= 75) return 'Good';
+    return 'Fair';
   };
 
   return (
@@ -34,9 +35,9 @@ export default function AIServiceSuggestions() {
                 <p className="text-sm text-muted-foreground">{service.description}</p>
               </div>
               <div className="text-right">
-                <p className="text-lg font-bold text-foreground">${service.price}</p>
+                <p className="text-lg font-bold text-foreground">{service.price}</p>
                 <p className={`text-xs font-semibold ${getBudgetFitColor(service.budgetFit)}`}>
-                  {service.budgetFit}
+                  {getBudgetFitLabel(service.budgetFit)}
                 </p>
               </div>
             </div>

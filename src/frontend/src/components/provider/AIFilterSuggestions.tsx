@@ -6,15 +6,16 @@ import { generateFilterSuggestions } from '../../utils/fakeAIData';
 export default function AIFilterSuggestions() {
   const suggestions = generateFilterSuggestions();
 
-  const getRelevanceBadge = (relevance: string) => {
-    switch (relevance) {
-      case 'High':
-        return 'bg-success text-success-foreground';
-      case 'Medium':
-        return 'bg-primary text-primary-foreground';
-      default:
-        return 'bg-muted text-muted-foreground';
-    }
+  const getRelevanceBadge = (relevance: number) => {
+    if (relevance >= 90) return 'bg-success text-success-foreground';
+    if (relevance >= 75) return 'bg-primary text-primary-foreground';
+    return 'bg-muted text-muted-foreground';
+  };
+
+  const getRelevanceLabel = (relevance: number) => {
+    if (relevance >= 90) return 'High';
+    if (relevance >= 75) return 'Medium';
+    return 'Low';
   };
 
   return (
@@ -30,10 +31,13 @@ export default function AIFilterSuggestions() {
           <div key={index} className="flex items-center justify-between p-3 rounded-xl border border-border bg-card">
             <div className="flex items-center gap-3">
               <Filter className="w-4 h-4 text-primary" />
-              <span className="text-sm text-foreground">{suggestion.filter}</span>
+              <div>
+                <p className="text-sm text-foreground">{suggestion.filter}</p>
+                <p className="text-xs text-muted-foreground">{suggestion.reason}</p>
+              </div>
             </div>
             <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getRelevanceBadge(suggestion.relevance)}`}>
-              {suggestion.relevance}
+              {getRelevanceLabel(suggestion.relevance)}
             </span>
           </div>
         ))}

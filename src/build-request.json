@@ -1,29 +1,111 @@
 {
   "kind": "build_request",
-  "title": "Retry deployment",
+  "title": "Fix registration completion flow for all user roles",
+  "projectName": "NEXY MYNDIS Concierge",
   "priority": "high",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Retry the deployment process that failed in the previous attempt",
-      "target": "both",
+      "text": "Fix the registration completion navigation for Participant role so that after completing the registration form in RegistrationPage.tsx, users are successfully redirected to the ParticipantDashboard",
+      "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-user-retry"
+          "msg-5"
         ],
         "quotes": [
-          "retry"
+          "i need you to fix the app when someone completes registration its not working at all none of them whther as participant or provider or whichever they all arent working"
         ]
       },
       "acceptanceCriteria": [
-        "The deployment process is re-initiated successfully",
-        "Any deployment errors are properly logged and reported",
-        "The application is accessible after successful deployment"
+        "After submitting the participant registration form, the user navigates to /dashboard/participant",
+        "The ParticipantDashboard loads successfully with Kenyan-localized dummy data",
+        "No console errors occur during the navigation"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Fix the registration completion navigation for Provider role so that after completing the registration form in RegistrationPage.tsx, users are successfully redirected to the ProviderDashboard",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "i need you to fix the app when someone completes registration its not working at all none of them whther as participant or provider or whichever they all arent working"
+        ]
+      },
+      "acceptanceCriteria": [
+        "After submitting the provider registration form, the user navigates to /dashboard/provider",
+        "The ProviderDashboard loads successfully with Kenyan-localized dummy data",
+        "No console errors occur during the navigation"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Fix the registration completion navigation for Guardian role so that after completing the registration form in RegistrationPage.tsx, users are successfully redirected to the GuardianDashboard",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "i need you to fix the app when someone completes registration its not working at all none of them whther as participant or provider or whichever they all arent working"
+        ]
+      },
+      "acceptanceCriteria": [
+        "After submitting the guardian registration form, the user navigates to /dashboard/guardian",
+        "The GuardianDashboard loads successfully with Kenyan-localized dummy data",
+        "No console errors occur during the navigation"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Fix the registration completion navigation for Plan Manager role so that after completing the registration form in RegistrationPage.tsx, users are successfully redirected to the PlanManagerDashboard",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "i need you to fix the app when someone completes registration its not working at all none of them whther as participant or provider or whichever they all arent working"
+        ]
+      },
+      "acceptanceCriteria": [
+        "After submitting the plan manager registration form, the user navigates to /dashboard/plan-manager",
+        "The PlanManagerDashboard loads successfully with Kenyan-localized dummy data",
+        "No console errors occur during the navigation"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Investigate and fix any backend issues preventing successful profile creation that may be blocking registration completion for all user roles",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "i need you to fix the app when someone completes registration its not working at all none of them whther as participant or provider or whichever they all arent working"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Profile creation mutations complete successfully in the backend",
+        "User role assignment persists correctly after registration",
+        "Backend returns appropriate success responses to the frontend"
       ]
     }
   ],
-  "constraints": [],
-  "nonGoals": [],
+  "constraints": [
+    "Do not modify frontend/src/hooks/useInternetIdentity.ts or frontend/src/hooks/useActor.ts",
+    "Do not change the existing dashboard routes structure in App.tsx",
+    "Maintain the Kenyan localization in all dummy data"
+  ],
+  "nonGoals": [
+    "Changing the registration form fields or validation logic",
+    "Modifying the dashboard UI layouts or components",
+    "Replacing dummy data with real data sources",
+    "Adding new user roles beyond the existing four"
+  ],
   "imageRequirements": {
     "required": [],
     "edits": []

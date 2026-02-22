@@ -1,9 +1,8 @@
-import { Heart, Mail, Linkedin, Twitter, Facebook } from 'lucide-react';
+import { Mail, Linkedin, Twitter, Facebook } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-  const appIdentifier = encodeURIComponent(window.location.hostname || 'nexy-myndis');
 
   return (
     <footer className="bg-gradient-to-br from-[#0d7377] via-[#1a1a2e] to-[#16697a] text-white">
@@ -149,22 +148,9 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-white/10">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="flex flex-col md:flex-row justify-center items-center">
             <p className="text-xs text-white/60">
               © {currentYear} NEXY MYNDIS CONCIERGE. All rights reserved.
-            </p>
-            <p className="text-xs text-white/60 flex items-center gap-2">
-              Built with{' '}
-              <Heart size={12} className="text-[#00b894] fill-[#00b894] inline-block" />{' '}
-              using{' '}
-              <a
-                href={`https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${appIdentifier}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[#00b894] hover:text-white font-medium transition-colors duration-200"
-              >
-                caffeine.ai
-              </a>
             </p>
           </div>
         </div>

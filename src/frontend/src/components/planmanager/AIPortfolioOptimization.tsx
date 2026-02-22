@@ -42,12 +42,15 @@ export default function AIPortfolioOptimization() {
               <TrendingUp className={`w-5 h-5 ${getImpactColor(opp.impact)} mt-0.5`} />
               <div className="flex-1">
                 <div className="flex items-center justify-between mb-1">
-                  <h4 className="font-semibold text-foreground">{opp.title}</h4>
+                  <h4 className="font-semibold text-foreground">{opp.type}</h4>
                   <span className={`text-xs font-semibold ${getImpactColor(opp.impact)}`}>
                     {opp.impact} Impact
                   </span>
                 </div>
-                <p className="text-sm text-muted-foreground">{opp.description}</p>
+                <p className="text-sm text-muted-foreground mb-2">{opp.description}</p>
+                <p className="text-sm font-semibold text-success">
+                  Potential savings: {opp.potentialSavings}
+                </p>
               </div>
             </div>
           </div>

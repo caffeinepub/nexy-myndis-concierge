@@ -15,28 +15,18 @@ export default function AICompatibilityInsights() {
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 gap-3">
-          <div className="p-3 rounded-xl bg-success/10 border border-success/20">
-            <p className="text-xs text-muted-foreground mb-1">Service Alignment</p>
-            <p className="text-xl font-bold text-foreground">{insights.serviceAlignment}%</p>
-          </div>
-          <div className="p-3 rounded-xl bg-primary/10 border border-primary/20">
-            <p className="text-xs text-muted-foreground mb-1">Budget Fit</p>
-            <p className="text-xl font-bold text-foreground">{insights.budgetFit}%</p>
-          </div>
-          <div className="p-3 rounded-xl bg-success/10 border border-success/20">
-            <p className="text-xs text-muted-foreground mb-1">Availability</p>
-            <p className="text-xl font-bold text-foreground">{insights.availabilityMatch}%</p>
-          </div>
-          <div className="p-3 rounded-xl bg-primary/10 border border-primary/20">
-            <p className="text-xs text-muted-foreground mb-1">Performance</p>
-            <p className="text-xl font-bold text-foreground">{insights.performanceHistory}%</p>
-          </div>
+          {insights.topFactors.map((factor, index) => (
+            <div key={index} className="p-3 rounded-xl bg-primary/10 border border-primary/20">
+              <p className="text-xs text-muted-foreground mb-1">{factor.factor}</p>
+              <p className="text-xl font-bold text-foreground">{factor.score}%</p>
+            </div>
+          ))}
         </div>
         <div className="space-y-2">
-          {insights.factors.map((factor, index) => (
+          {insights.topFactors.map((factor, index) => (
             <div key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
               <CheckCircle className="w-4 h-4 text-success mt-0.5" />
-              <span>{factor}</span>
+              <span>{factor.description}</span>
             </div>
           ))}
         </div>

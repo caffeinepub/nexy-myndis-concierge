@@ -1,41 +1,74 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Retry Deployment - Frontend Verification",
+  "title": "Fix registration completion flow for all user roles",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Verify and ensure the deployment process completes successfully with proper error handling and logging",
+      "summary": "Fix the registration completion navigation for Participant role so users are redirected to ParticipantDashboard after completing registration",
       "acceptanceCriteria": [
-        "The deployment process is re-initiated successfully",
-        "Any deployment errors are properly logged and reported",
-        "The application is accessible after successful deployment"
+        "After submitting the participant registration form, the user navigates to /dashboard/participant",
+        "The ParticipantDashboard loads successfully with Kenyan-localized dummy data",
+        "No console errors occur during the navigation"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/main.tsx",
+          "path": "frontend/src/pages/RegistrationPage.tsx",
           "operation": "modify",
-          "description": "Add error boundary and deployment verification logging to catch and report any initialization failures during app bootstrap"
+          "description": "Fix the registration completion flow for participant role by ensuring proper coordination between profile save, role assignment, and navigation. Update the handleSubmit function to properly await both saveCallerUserProfile and assignCallerUserRole mutations before navigation. Ensure the navigation logic correctly maps 'participant' role to '/dashboard/participant' route. Add error handling for failed profile saves or role assignments. Verify role query invalidation happens before navigation to ensure fresh role data is available."
         },
         {
-          "path": "frontend/src/hooks/useActor.ts",
+          "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Enhance actor initialization error handling with detailed logging for connection failures, authentication errors, and admin initialization issues"
-        },
+          "description": "Review and fix the useAssignCallerUserRole mutation hook to ensure it properly invalidates the 'currentUserRole' query after successful role assignment. Verify the mutation returns success status and handles errors appropriately. Ensure the onSuccess callback properly triggers query invalidation so the role change is reflected immediately."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Fix the registration completion navigation for Provider role so users are redirected to ProviderDashboard after completing registration",
+      "acceptanceCriteria": [
+        "After submitting the provider registration form, the user navigates to /dashboard/provider",
+        "The ProviderDashboard loads successfully with Kenyan-localized dummy data",
+        "No console errors occur during the navigation"
+      ],
+      "file_operations": [
         {
-          "path": "frontend/src/hooks/useInternetIdentity.ts",
+          "path": "frontend/src/pages/RegistrationPage.tsx",
           "operation": "modify",
-          "description": "Add comprehensive error logging for Internet Identity authentication failures, delegation errors, and session persistence issues"
-        },
+          "description": "Fix the registration completion flow for provider role by ensuring the role value 'provider' is correctly mapped to the dashboard route '/dashboard/provider'. Update the navigation logic in handleSubmit to use the correct route mapping. Ensure proper error handling and loading states during the registration process. Verify that the role assignment completes successfully before navigation."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Fix the registration completion navigation for Guardian role so users are redirected to GuardianDashboard after completing registration",
+      "acceptanceCriteria": [
+        "After submitting the guardian registration form, the user navigates to /dashboard/guardian",
+        "The GuardianDashboard loads successfully with Kenyan-localized dummy data",
+        "No console errors occur during the navigation"
+      ],
+      "file_operations": [
         {
-          "path": "frontend/src/components/common/DeploymentStatus.tsx",
-          "operation": "create",
-          "description": "Create a deployment status indicator component that displays connection health, backend availability, and authentication readiness for deployment verification"
-        },
-        {
-          "path": "frontend/src/App.tsx",
+          "path": "frontend/src/pages/RegistrationPage.tsx",
           "operation": "modify",
-          "description": "Add deployment verification checks on app initialization and display the DeploymentStatus component in development mode to confirm successful deployment"
+          "description": "Fix the registration completion flow for guardian role by ensuring the role value 'guardian' is correctly mapped to the dashboard route '/dashboard/guardian'. Update the navigation logic to handle guardian role registration completion. Ensure the form submission properly saves the guardian profile with all required fields before attempting navigation."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Fix the registration completion navigation for Plan Manager role so users are redirected to PlanManagerDashboard after completing registration",
+      "acceptanceCriteria": [
+        "After submitting the plan manager registration form, the user navigates to /dashboard/plan-manager",
+        "The PlanManagerDashboard loads successfully with Kenyan-localized dummy data",
+        "No console errors occur during the navigation"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/RegistrationPage.tsx",
+          "operation": "modify",
+          "description": "Fix the registration completion flow for plan manager role by ensuring the role value 'planManager' is correctly mapped to the dashboard route '/dashboard/plan-manager'. Update the role-to-route mapping logic to handle the plan manager case with proper hyphenation in the URL path. Verify the role assignment uses the correct role string value that matches the backend expectations."
         }
       ]
     }

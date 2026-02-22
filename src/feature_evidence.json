@@ -1,4 +1,89 @@
 {
   "kind": "feature_evidence_report",
-  "features": []
+  "features": [
+    {
+      "featureId": "feature-fix-the-registration-completion-navigation-for-participant-role-so-that-after-completing-the-registration-form-in-registrationpage-tsx-users-are-successfully-redirected-to-the-participantdashboard",
+      "featureTitle": "Fix the registration completion navigation for Participant role so that after completing the registration form in RegistrationPage.tsx, users are successfully redirected to the ParticipantDashboard",
+      "files": [
+        "frontend/src/pages/RegistrationPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "user-approval@3.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-fix-the-registration-completion-navigation-for-provider-role-so-that-after-completing-the-registration-form-in-registrationpage-tsx-users-are-successfully-redirected-to-the-providerdashboard",
+      "featureTitle": "Fix the registration completion navigation for Provider role so that after completing the registration form in RegistrationPage.tsx, users are successfully redirected to the ProviderDashboard",
+      "files": [
+        "frontend/src/pages/RegistrationPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "user-approval@3.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-fix-the-registration-completion-navigation-for-guardian-role-so-that-after-completing-the-registration-form-in-registrationpage-tsx-users-are-successfully-redirected-to-the-guardiandashboard",
+      "featureTitle": "Fix the registration completion navigation for Guardian role so that after completing the registration form in RegistrationPage.tsx, users are successfully redirected to the GuardianDashboard",
+      "files": [
+        "frontend/src/pages/RegistrationPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "user-approval@3.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-fix-the-registration-completion-navigation-for-plan-manager-role-so-that-after-completing-the-registration-form-in-registrationpage-tsx-users-are-successfully-redirected-to-the-planmanagerdashboard",
+      "featureTitle": "Fix the registration completion navigation for Plan Manager role so that after completing the registration form in RegistrationPage.tsx, users are successfully redirected to the PlanManagerDashboard",
+      "files": [
+        "frontend/src/pages/RegistrationPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "user-approval@3.0.0"
+      ],
+      "testIds": [
+        "REQ-4"
+      ],
+      "confidence": "high"
+    }
+  ]
 }

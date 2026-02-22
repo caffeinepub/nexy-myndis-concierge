@@ -3,20 +3,55 @@
   "projectStateVersion": 3,
   "summary": "New project",
   "architectural_notes": [],
-  "known_issues": [],
-  "isFixRequest": false,
-  "existing_features": [],
-  "new_feature_requests": [
+  "known_issues": [
+    "Registration completion flow broken for all user types (participant, provider, etc.)"
+  ],
+  "isFixRequest": true,
+  "existing_features": [
     {
-      "id": "AR-1",
-      "summary": "Retry the deployment process that failed in the previous attempt",
+      "id": "feature-fix-the-registration-completion-navigation-for-participant-role-so-that-after-completing-the-registration-form-in-registrationpage-tsx-users-are-successfully-redirected-to-the-participantdashboard",
+      "title": "Fix the registration completion navigation for Participant role so that after completing the registration form in RegistrationPage.tsx, users are successfully redirected to the ParticipantDashboard",
       "reqIds": [
         "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-registration-completion-navigation-for-provider-role-so-that-after-completing-the-registration-form-in-registrationpage-tsx-users-are-successfully-redirected-to-the-providerdashboard",
+      "title": "Fix the registration completion navigation for Provider role so that after completing the registration form in RegistrationPage.tsx, users are successfully redirected to the ProviderDashboard",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-registration-completion-navigation-for-guardian-role-so-that-after-completing-the-registration-form-in-registrationpage-tsx-users-are-successfully-redirected-to-the-guardiandashboard",
+      "title": "Fix the registration completion navigation for Guardian role so that after completing the registration form in RegistrationPage.tsx, users are successfully redirected to the GuardianDashboard",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-the-registration-completion-navigation-for-plan-manager-role-so-that-after-completing-the-registration-form-in-registrationpage-tsx-users-are-successfully-redirected-to-the-planmanagerdashboard",
+      "title": "Fix the registration completion navigation for Plan Manager role so that after completing the registration form in RegistrationPage.tsx, users are successfully redirected to the PlanManagerDashboard",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-5",
+      "summary": "Investigate and fix any backend issues preventing successful profile creation that may be blocking registration completion for all user roles",
+      "reqIds": [
+        "REQ-5"
       ],
       "status": "pending"
     }
   ],
-  "projectName": "Retry deployment",
+  "projectName": "NEXY MYNDIS Concierge",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

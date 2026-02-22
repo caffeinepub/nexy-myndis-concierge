@@ -1,13 +1,13 @@
 import { Star } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { generateCompatibilityScore } from '../../utils/fakeAIData';
 
 interface AICompatibilityBadgeProps {
   participantId?: string;
 }
 
 export default function AICompatibilityBadge({ participantId }: AICompatibilityBadgeProps) {
-  const score = generateCompatibilityScore();
+  // Generate a random score between 75-98 for demo purposes
+  const score = Math.floor(Math.random() * 23) + 75;
 
   const getScoreColor = (score: number) => {
     if (score >= 85) return 'text-success bg-success/10 border-success/20';

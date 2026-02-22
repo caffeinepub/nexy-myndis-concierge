@@ -1,9 +1,8 @@
 import { useNavigate, useParams } from '@tanstack/react-router';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
-import { useRegisterParticipant, useRegisterServiceProvider, useRegisterPlanManager, useRegisterGuardian, useSaveCallerUserProfile } from '../hooks/useQueries';
+import { useSaveCallerUserProfile } from '../hooks/useQueries';
 import { useState, useEffect } from 'react';
 import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
-import { Principal } from '@icp-sdk/core/principal';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
@@ -13,10 +12,6 @@ export default function RegistrationPage() {
   const { identity } = useInternetIdentity();
   const queryClient = useQueryClient();
   
-  const registerParticipant = useRegisterParticipant();
-  const registerProvider = useRegisterServiceProvider();
-  const registerPlanManager = useRegisterPlanManager();
-  const registerGuardian = useRegisterGuardian();
   const saveProfile = useSaveCallerUserProfile();
 
   const [step, setStep] = useState(1);
@@ -64,61 +59,20 @@ export default function RegistrationPage() {
     setIsSubmitting(true);
 
     try {
-      // Save user profile first
+      // Save user profile with role
       await saveProfile.mutateAsync({
         name: formData.name,
         email: formData.email,
         role: role,
       });
 
-      // Register based on role
-      if (role === 'participant') {
-        await registerParticipant.mutateAsync({
-          name: formData.name,
-          age: BigInt(formData.age || 0),
-          primaryContact: formData.primaryContact,
-          ndisNumber: formData.ndisNumber,
-          address: formData.address,
-          planManager: Principal.anonymous(),
-        });
-      } else if (role === 'provider') {
-        await registerProvider.mutateAsync({
-          principal: identity.getPrincipal(),
-          name: formData.name,
-          abn: formData.abn,
-          ndisVerified: false,
-          serviceTypes: formData.services.split(',').map(s => s.trim()),
-          summary: 'Experienced NDIS service provider',
-          availability: [],
-          priceList: [],
-          rating: undefined,
-        });
-      } else if (role === 'planManager') {
-        await registerPlanManager.mutateAsync({
-          provider: Principal.anonymous(),
-        });
-      } else if (role === 'guardian') {
-        await registerGuardian.mutateAsync({
-          participant: Principal.anonymous(),
-        });
-      }
-
       // Invalidate queries to refresh data
       await queryClient.invalidateQueries({ queryKey: ['currentUserProfile'] });
-      await queryClient.invalidateQueries({ queryKey: ['currentUserRole'] });
-      await queryClient.invalidateQueries({ queryKey: ['participant'] });
 
       toast.success('Registration completed successfully!');
       
-      // Navigate to appropriate dashboard
-      const dashboardRoutes: Record<string, string> = {
-        participant: '/dashboard',
-        provider: '/provider-dashboard',
-        guardian: '/guardian-dashboard',
-        planManager: '/plan-manager-dashboard',
-      };
-      
-      navigate({ to: dashboardRoutes[role] || '/dashboard' });
+      // Navigate to dashboard - DashboardRouter will determine which dashboard to show
+      navigate({ to: '/dashboard' });
     } catch (error: any) {
       console.error('Registration error:', error);
       toast.error(error.message || 'Registration failed. Please try again.');
@@ -220,7 +174,7 @@ export default function RegistrationPage() {
                           onChange={handleInputChange}
                           required
                           className="w-full px-5 py-4 border-2 border-input rounded-xl text-base transition-all focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/20 bg-background"
-                          placeholder="Phone number"
+                          placeholder="+254 7XX XXX XXX"
                         />
                       </div>
                     </>
@@ -230,7 +184,7 @@ export default function RegistrationPage() {
                     <>
                       <div>
                         <label className="block text-sm font-semibold text-foreground mb-2">
-                          ABN *
+                          Business Registration Number *
                         </label>
                         <input
                           type="text"
@@ -239,7 +193,7 @@ export default function RegistrationPage() {
                           onChange={handleInputChange}
                           required
                           className="w-full px-5 py-4 border-2 border-input rounded-xl text-base transition-all focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/20 bg-background"
-                          placeholder="Australian Business Number"
+                          placeholder="Business registration number"
                         />
                       </div>
 
@@ -324,7 +278,7 @@ export default function RegistrationPage() {
                       {role === 'provider' && (
                         <>
                           <div className="flex justify-between">
-                            <span className="text-muted-foreground">ABN:</span>
+                            <span className="text-muted-foreground">Registration:</span>
                             <span className="font-medium text-foreground">{formData.abn}</span>
                           </div>
                           <div className="flex justify-between">
@@ -373,7 +327,7 @@ export default function RegistrationPage() {
                         Registering...
                       </>
                     ) : (
-                      'Complete Registration'
+                      'Complete Profile'
                     )}
                   </button>
                 )}

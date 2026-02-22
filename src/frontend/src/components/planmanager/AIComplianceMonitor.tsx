@@ -20,16 +20,16 @@ export default function AIComplianceMonitor() {
               <Shield className="w-5 h-5 text-success" />
               <span className="text-sm font-medium text-muted-foreground">Compliance Score</span>
             </div>
-            <p className="text-2xl font-bold text-foreground">{metrics.score}%</p>
+            <p className="text-2xl font-bold text-foreground">{metrics.overallScore}%</p>
             <p className="text-xs text-success mt-1">Excellent</p>
           </div>
           <div className="p-4 rounded-xl bg-primary/10 border border-primary/20">
             <div className="flex items-center gap-2 mb-2">
               <CheckCircle className="w-5 h-5 text-primary" />
-              <span className="text-sm font-medium text-muted-foreground">Audits Passed</span>
+              <span className="text-sm font-medium text-muted-foreground">Audit Areas</span>
             </div>
-            <p className="text-2xl font-bold text-foreground">{metrics.auditsPassed}/{metrics.auditsTotal}</p>
-            <p className="text-xs text-primary mt-1">Last 30 days</p>
+            <p className="text-2xl font-bold text-foreground">{metrics.audits.length}</p>
+            <p className="text-xs text-primary mt-1">Monitored</p>
           </div>
         </div>
         <div className="space-y-3">
@@ -39,9 +39,10 @@ export default function AIComplianceMonitor() {
               <div key={index} className="flex items-center gap-3 p-3 rounded-xl bg-success/10 border border-success/20">
                 <CheckCircle className="w-5 h-5 text-success" />
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-foreground">{check.name}</p>
-                  <p className="text-xs text-muted-foreground">{check.description}</p>
+                  <p className="text-sm font-medium text-foreground">{check.type}</p>
+                  <p className="text-xs text-muted-foreground">{check.notes}</p>
                 </div>
+                <span className="text-xs font-semibold text-success">{check.result}</span>
               </div>
             ))}
           </div>

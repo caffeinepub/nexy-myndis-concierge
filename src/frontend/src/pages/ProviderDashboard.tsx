@@ -1,120 +1,151 @@
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
-import { useDetectAnomalies, useGetProviderBookings, useGetProviderInvoices } from '../hooks/useQueries';
+import { useGetCallerUserProfile } from '../hooks/useQueries';
 import { useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import PageLayout from '../components/layout/PageLayout';
-import AnomalyWarningBanner from '../components/provider/AnomalyWarningBanner';
 import AIRevenueAnalytics from '../components/provider/AIRevenueAnalytics';
 import AIBookingOptimization from '../components/provider/AIBookingOptimization';
 import AIClientNeedsPrediction from '../components/provider/AIClientNeedsPrediction';
+import AnomalyWarningBanner from '../components/provider/AnomalyWarningBanner';
 import LoadingState from '../components/common/LoadingState';
-import { DollarSign, Calendar, Star, TrendingUp, AlertTriangle, Brain } from 'lucide-react';
+import { DollarSign, Calendar, Users, TrendingUp } from 'lucide-react';
 
 export default function ProviderDashboard() {
   const { identity } = useInternetIdentity();
   const navigate = useNavigate();
-  
-  // Only fetch data if identity is available
-  const providerPrincipal = identity?.getPrincipal();
-  const { data: anomalies = [], isLoading: anomaliesLoading } = useDetectAnomalies(providerPrincipal);
-  const { data: bookings = [], isLoading: bookingsLoading } = useGetProviderBookings();
-  const { data: invoices = [], isLoading: invoicesLoading } = useGetProviderInvoices();
+  const { data: userProfile, isLoading: profileLoading } = useGetCallerUserProfile();
 
-  // Redirect to get-started if not authenticated
   useEffect(() => {
     if (!identity) {
-      navigate({ to: '/get-started' });
+      navigate({ to: '/' });
     }
   }, [identity, navigate]);
 
-  const flaggedInvoicesCount = anomalies.length;
-  const aiInsightsCount = 8;
+  if (!identity) {
+    return null;
+  }
 
-  if (anomaliesLoading || bookingsLoading || invoicesLoading) {
+  if (profileLoading) {
     return (
-      <PageLayout title="Provider Dashboard">
-        <LoadingState message="Loading provider dashboard..." />
+      <PageLayout title="Dashboard">
+        <LoadingState message="Loading your dashboard..." />
       </PageLayout>
     );
   }
 
+  // Mock data for provider stats
+  const stats = {
+    monthlyRevenue: 'KES 385,000',
+    upcomingBookings: 18,
+    activeClients: 24,
+    growthRate: '+12%',
+  };
+
+  // Mock bookings data
+  const upcomingBookings = [
+    { client: 'Wanjiku Kamau', service: 'Physiotherapy', time: 'Today, 10:00 AM', location: 'Westlands' },
+    { client: 'Ochieng Otieno', service: 'Occupational Therapy', time: 'Today, 2:00 PM', location: 'Kilimani' },
+    { client: 'Akinyi Njeri', service: 'Speech Therapy', time: 'Tomorrow, 9:00 AM', location: 'Nyali' },
+  ];
+
+  // Mock anomalies for Kenyan context
+  const mockAnomalies = [
+    'Invoice #INV-2026-045 shows 30% higher rate than usual for physiotherapy sessions in Nairobi',
+    'Unusual service frequency detected for participant Kamau Kariuki - 5 sessions in 2 days',
+  ];
+
   return (
     <PageLayout title="Provider Dashboard">
-      {/* Anomaly Warning Banner */}
-      {anomalies.length > 0 && (
-        <AnomalyWarningBanner anomalies={anomalies} />
-      )}
+      <div className="max-w-7xl mx-auto">
+        {/* Welcome Section */}
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-foreground mb-2">
+            Provider Dashboard
+          </h1>
+          <p className="text-lg text-muted-foreground">
+            Welcome back, {userProfile?.name || 'Provider'}! Here's your business overview
+          </p>
+        </div>
 
-      {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-[#0d7377] to-[#1a1a2e] rounded-3xl p-12 text-white mb-12">
-        <h1 className="text-4xl font-bold mb-4">Provider Dashboard</h1>
-        <p className="text-lg opacity-90">
-          Manage your services, bookings, and client relationships with AI-powered analytics
-        </p>
-      </div>
+        {/* Anomaly Warning */}
+        <div className="mb-8">
+          <AnomalyWarningBanner anomalies={mockAnomalies} />
+        </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-        <div className="bg-white rounded-2xl p-8 shadow-md border border-[#eeeeee]">
-          <div className="w-14 h-14 bg-[#e0f2f1] rounded-xl flex items-center justify-center mb-5">
-            <Calendar className="w-7 h-7 text-[#0d7377]" />
+        {/* Stats Overview */}
+        <div className="grid gap-6 md:grid-cols-4 mb-8">
+          <div className="bg-card rounded-2xl p-6 shadow-layer-2 border border-border">
+            <div className="flex items-center justify-between mb-2">
+              <DollarSign className="w-8 h-8 text-success" />
+            </div>
+            <div className="text-3xl font-bold text-foreground mb-1">
+              {stats.monthlyRevenue}
+            </div>
+            <div className="text-sm text-muted-foreground">Monthly Revenue</div>
           </div>
-          <div className="text-3xl font-bold text-[#1a1a2e] mb-2">{bookings.length}</div>
-          <div className="text-sm text-[#616161] font-medium">Active Bookings</div>
-        </div>
 
-        <div className="bg-white rounded-2xl p-8 shadow-md border border-[#eeeeee]">
-          <div className="w-14 h-14 bg-[#e0f2f1] rounded-xl flex items-center justify-center mb-5">
-            <DollarSign className="w-7 h-7 text-[#0d7377]" />
+          <div className="bg-card rounded-2xl p-6 shadow-layer-2 border border-border">
+            <div className="flex items-center justify-between mb-2">
+              <Calendar className="w-8 h-8 text-primary" />
+            </div>
+            <div className="text-3xl font-bold text-foreground mb-1">
+              {stats.upcomingBookings}
+            </div>
+            <div className="text-sm text-muted-foreground">Upcoming Bookings</div>
           </div>
-          <div className="text-3xl font-bold text-[#1a1a2e] mb-2">{invoices.length}</div>
-          <div className="text-sm text-[#616161] font-medium">Pending Invoices</div>
-        </div>
 
-        <div className="bg-white rounded-2xl p-8 shadow-md border border-[#eeeeee]">
-          <div className="w-14 h-14 bg-[#e0f2f1] rounded-xl flex items-center justify-center mb-5">
-            <Brain className="w-7 h-7 text-[#0d7377]" />
+          <div className="bg-card rounded-2xl p-6 shadow-layer-2 border border-border">
+            <div className="flex items-center justify-between mb-2">
+              <Users className="w-8 h-8 text-primary" />
+            </div>
+            <div className="text-3xl font-bold text-foreground mb-1">
+              {stats.activeClients}
+            </div>
+            <div className="text-sm text-muted-foreground">Active Clients</div>
           </div>
-          <div className="text-3xl font-bold text-[#1a1a2e] mb-2">{aiInsightsCount}</div>
-          <div className="text-sm text-[#616161] font-medium">AI Insights</div>
-        </div>
 
-        <div className="bg-white rounded-2xl p-8 shadow-md border border-[#eeeeee]">
-          <div className="w-14 h-14 bg-[#fff3e0] rounded-xl flex items-center justify-center mb-5">
-            <AlertTriangle className="w-7 h-7 text-[#ff9800]" />
+          <div className="bg-card rounded-2xl p-6 shadow-layer-2 border border-border">
+            <div className="flex items-center justify-between mb-2">
+              <TrendingUp className="w-8 h-8 text-success" />
+            </div>
+            <div className="text-3xl font-bold text-foreground mb-1">
+              {stats.growthRate}
+            </div>
+            <div className="text-sm text-muted-foreground">Growth Rate</div>
           </div>
-          <div className="text-3xl font-bold text-[#1a1a2e] mb-2">{flaggedInvoicesCount}</div>
-          <div className="text-sm text-[#616161] font-medium">Flagged Items</div>
-        </div>
-      </div>
-
-      {/* AI Analytics Section */}
-      <div className="grid gap-8 lg:grid-cols-3 mb-8">
-        <AIRevenueAnalytics />
-        <AIBookingOptimization />
-        <AIClientNeedsPrediction />
-      </div>
-
-      {/* Additional Content */}
-      <div className="grid gap-8 lg:grid-cols-2">
-        <div className="bg-white rounded-2xl p-8 shadow-md border border-[#eeeeee]">
-          <h2 className="text-xl font-bold text-[#1a1a2e] mb-6 flex items-center gap-3">
-            <Calendar className="w-6 h-6 text-[#0d7377]" />
-            Recent Bookings
-          </h2>
-          {bookings.length > 0 ? (
-            <p className="text-[#616161]">You have {bookings.length} active bookings</p>
-          ) : (
-            <p className="text-[#616161]">No active bookings at this time</p>
-          )}
         </div>
 
-        <div className="bg-white rounded-2xl p-8 shadow-md border border-[#eeeeee]">
-          <h2 className="text-xl font-bold text-[#1a1a2e] mb-6 flex items-center gap-3">
-            <DollarSign className="w-6 h-6 text-[#0d7377]" />
-            Revenue Overview
-          </h2>
-          <p className="text-[#616161]">Revenue tracking and analytics</p>
+        {/* Upcoming Bookings */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-foreground mb-4">Upcoming Bookings</h2>
+          <div className="bg-card rounded-2xl shadow-layer-2 border border-border overflow-hidden">
+            <div className="divide-y divide-border">
+              {upcomingBookings.map((booking, index) => (
+                <div key={index} className="p-6 hover:bg-muted/50 transition-colors">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-semibold text-foreground mb-1">{booking.client}</h3>
+                      <p className="text-sm text-muted-foreground">{booking.service}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-medium text-foreground">{booking.time}</p>
+                      <p className="text-sm text-muted-foreground">{booking.location}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* AI Analytics */}
+        <div className="grid gap-6 lg:grid-cols-2 mb-8">
+          <AIRevenueAnalytics />
+          <AIBookingOptimization />
+        </div>
+
+        <div className="mb-8">
+          <AIClientNeedsPrediction />
         </div>
       </div>
     </PageLayout>

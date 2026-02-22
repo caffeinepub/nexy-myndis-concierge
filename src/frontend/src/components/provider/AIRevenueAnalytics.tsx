@@ -18,18 +18,18 @@ export default function AIRevenueAnalytics() {
           <div className="p-4 rounded-xl bg-success/10 border border-success/20">
             <div className="flex items-center gap-2 mb-2">
               <DollarSign className="w-5 h-5 text-success" />
-              <span className="text-sm font-medium text-muted-foreground">Predicted Monthly</span>
+              <span className="text-sm font-medium text-muted-foreground">Current Month</span>
             </div>
-            <p className="text-2xl font-bold text-foreground">${analytics.predictedMonthly.toLocaleString()}</p>
-            <p className="text-xs text-success mt-1">{analytics.monthOverMonth} vs last month</p>
+            <p className="text-2xl font-bold text-foreground">{analytics.currentMonth.revenue}</p>
+            <p className="text-xs text-success mt-1">{analytics.currentMonth.growth} vs last month</p>
           </div>
           <div className="p-4 rounded-xl bg-primary/10 border border-primary/20">
             <div className="flex items-center gap-2 mb-2">
               <TrendingUp className="w-5 h-5 text-primary" />
-              <span className="text-sm font-medium text-muted-foreground">Growth Trend</span>
+              <span className="text-sm font-medium text-muted-foreground">Top Service</span>
             </div>
-            <p className="text-2xl font-bold text-foreground">{analytics.growthTrend}</p>
-            <p className="text-xs text-primary mt-1">3-month average</p>
+            <p className="text-lg font-bold text-foreground">{analytics.currentMonth.topServices[0].name}</p>
+            <p className="text-xs text-primary mt-1">{analytics.currentMonth.topServices[0].revenue}</p>
           </div>
         </div>
         <div className="space-y-3">

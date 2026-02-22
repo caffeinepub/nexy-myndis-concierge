@@ -6,8 +6,6 @@ import AccessControl "authorization/access-control";
 import MixinStorage "blob-storage/Mixin";
 import MixinAuthorization "authorization/MixinAuthorization";
 
-
-
 actor {
   include MixinStorage();
   let accessControlState = AccessControl.initState();
@@ -50,35 +48,29 @@ actor {
 
   // User Profile Management
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
-    if (caller.isAnonymous()) {
-      Runtime.trap("Unauthorized: Anonymous users cannot access profiles");
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+      Runtime.trap("Unauthorized: Only users can access profiles");
     };
     userProfiles.get(caller);
   };
 
   public shared ({ caller }) func saveCallerUserProfile(profile : UserProfile) : async () {
-    if (caller.isAnonymous()) {
-      Runtime.trap("Unauthorized: Anonymous users cannot save profiles");
-    };
-    
-    // Only users with #user permission can save/update profiles
-    // This ensures proper authorization flow through the approval system
     if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
       Runtime.trap("Unauthorized: Only users can save profiles");
     };
-    
     userProfiles.add(caller, profile);
   };
 
   public query ({ caller }) func getUserProfile(user : Principal) : async ?UserProfile {
-    if (caller.isAnonymous()) {
-      Runtime.trap("Unauthorized: Anonymous users cannot access profiles");
-    };
-    
-    if (user == caller or AccessControl.isAdmin(accessControlState, caller)) {
+    if (caller == user) {
+      if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+        Runtime.trap("Unauthorized: Only users can access profiles");
+      };
       return userProfiles.get(user);
     };
-    
+    if (AccessControl.isAdmin(accessControlState, caller)) {
+      return userProfiles.get(user);
+    };
     Runtime.trap("Unauthorized: Can only view your own profile");
   };
 };

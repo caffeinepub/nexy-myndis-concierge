@@ -1,6 +1,6 @@
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
-import { Menu, X, Sparkles } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import LoginButton from '../auth/LoginButton';
 import { useInternetIdentity } from '../../hooks/useInternetIdentity';
 import { useUserRole } from '../../hooks/useUserRole';
@@ -44,9 +44,6 @@ export default function Header() {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 bg-gradient-to-br from-primary to-success rounded-xl flex items-center justify-center transition-transform group-hover:scale-110">
-              <Sparkles className="w-6 h-6 text-primary-foreground" />
-            </div>
             <span className="text-xl font-bold text-foreground">NDIS Connect</span>
           </Link>
 

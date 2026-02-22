@@ -1,4 +1,4 @@
-// Fake AI data generators for all AI components
+// Fake AI data generators for all AI components - Kenyan localized
 
 export interface AIInsight {
   type: 'tip' | 'warning' | 'opportunity';
@@ -19,6 +19,8 @@ export interface ProviderRecommendation {
   matchScore: number;
   reason: string;
   availability: string;
+  location: string;
+  phone: string;
 }
 
 export interface RiskAssessment {
@@ -33,6 +35,7 @@ export interface PriorityParticipant {
   urgency: 'high' | 'medium' | 'low';
   reason: string;
   action: string;
+  location: string;
 }
 
 export function generateAIInsights(): AIInsight[] {
@@ -40,7 +43,7 @@ export function generateAIInsights(): AIInsight[] {
     {
       type: 'opportunity',
       title: 'Budget Optimization Opportunity',
-      description: 'Switch to bulk therapy sessions to save 15% on Core Supports. You have $2,400 remaining that could be better allocated.',
+      description: 'Switch to bulk therapy sessions to save 15% on Core Supports. You have KES 240,000 remaining that could be better allocated.',
     },
     {
       type: 'tip',
@@ -81,25 +84,31 @@ export function generateMilestoneAlerts(): MilestoneAlert[] {
 export function generateProviderRecommendations(): ProviderRecommendation[] {
   return [
     {
-      name: 'Sarah Thompson',
+      name: 'Wanjiku Mwangi',
       specialty: 'Occupational Therapy',
       matchScore: 95,
-      reason: 'Matches your mobility goals and has excellent availability',
-      availability: 'Next available: Tomorrow 2:00 PM',
+      reason: 'Specializes in mobility support and has excellent reviews from participants with similar needs',
+      availability: 'Available this week',
+      location: 'Westlands, Nairobi',
+      phone: '+254 722 345 678',
     },
     {
-      name: 'Melbourne Physio Care',
+      name: 'Ochieng Otieno',
       specialty: 'Physiotherapy',
       matchScore: 88,
-      reason: 'Experienced with similar cases and accepts new clients',
-      availability: 'Next available: Friday 10:00 AM',
+      reason: 'Experienced in post-injury rehabilitation and accepts your plan budget',
+      availability: 'Next week',
+      location: 'Kilimani, Nairobi',
+      phone: '+254 733 456 789',
     },
     {
-      name: 'Community Connect Services',
-      specialty: 'Social Participation',
-      matchScore: 85,
-      reason: 'High ratings for community engagement programs',
-      availability: 'Next available: Next Monday',
+      name: 'Akinyi Njeri',
+      specialty: 'Speech Therapy',
+      matchScore: 82,
+      reason: 'Highly rated for communication support services',
+      availability: 'Available today',
+      location: 'Nyali, Mombasa',
+      phone: '+254 711 234 567',
     },
   ];
 }
@@ -107,48 +116,101 @@ export function generateProviderRecommendations(): ProviderRecommendation[] {
 export function generateRiskAssessments(): RiskAssessment[] {
   return [
     {
-      participant: 'Managed Participant',
+      participant: 'Kamau Kariuki',
+      riskLevel: 'high',
+      factors: [
+        'Budget depletion in 3 weeks',
+        'Missed 2 therapy sessions',
+        'No plan manager assigned',
+      ],
+      recommendation: 'Immediate intervention required. Schedule urgent review meeting and assign plan manager.',
+    },
+    {
+      participant: 'Njoki Wambui',
+      riskLevel: 'medium',
+      factors: [
+        'Spending 20% above average',
+        'Plan review overdue by 5 days',
+      ],
+      recommendation: 'Monitor spending closely and schedule plan review within 48 hours.',
+    },
+    {
+      participant: 'Kipchoge Mutai',
       riskLevel: 'low',
-      factors: ['Budget on track', 'Regular service utilization', 'Goals progressing well'],
-      recommendation: 'Continue current plan - no action needed',
+      factors: [
+        'On track with budget',
+        'Regular service utilization',
+      ],
+      recommendation: 'Continue current support level. Routine check-in next month.',
+    },
+  ];
+}
+
+export function generatePriorityParticipants(): PriorityParticipant[] {
+  return [
+    {
+      name: 'Achieng Omondi',
+      urgency: 'high',
+      reason: 'Budget depleting faster than expected - only 2 weeks remaining',
+      action: 'Schedule emergency budget review',
+      location: 'Kibera, Nairobi',
+    },
+    {
+      name: 'Muthoni Githinji',
+      urgency: 'medium',
+      reason: 'Plan review overdue by 1 week',
+      action: 'Contact to schedule review meeting',
+      location: 'Nakuru',
+    },
+    {
+      name: 'Barasa Wekesa',
+      urgency: 'low',
+      reason: 'Upcoming plan expiry in 30 days',
+      action: 'Begin renewal preparation',
+      location: 'Eldoret',
     },
   ];
 }
 
 export function generateBudgetPredictions() {
   return {
-    depletionDate: 'Expected to deplete in 4.2 months',
-    status: 'on-track',
-    utilizationRate: 65,
+    depletionDate: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toLocaleDateString('en-KE'),
+    currentSpendingRate: 'KES 85,000/month',
     recommendations: [
-      'Maintain current spending pace for optimal budget utilization',
-      'Consider reallocating $500 from unused transport budget',
-      'Book additional services in underutilized categories',
+      'Consider reducing therapy frequency from 3x to 2x per week to extend budget',
+      'Switch to group sessions for social participation activities (save KES 15,000/month)',
+      'Review high-cost services - some may be available at lower rates from other providers',
+    ],
+    trends: [
+      { month: 'Jan', spent: 82000, projected: 85000 },
+      { month: 'Feb', spent: 88000, projected: 85000 },
+      { month: 'Mar', spent: 0, projected: 85000 },
     ],
   };
 }
 
-export function generatePriorityParticipants(): PriorityParticipant[] {
-  return [
-    {
-      name: 'Managed Participant',
-      urgency: 'low',
-      reason: 'All metrics within normal range',
-      action: 'Review monthly progress',
-    },
-  ];
-}
-
 export function generateComplianceMetrics() {
   return {
-    score: 98,
-    auditsPassed: 24,
-    auditsTotal: 25,
+    overallScore: 94,
+    audits: [
+      { area: 'Invoice Documentation', score: 98, status: 'excellent' },
+      { area: 'Service Delivery Records', score: 92, status: 'good' },
+      { area: 'Budget Tracking', score: 89, status: 'good' },
+      { area: 'Participant Consent Forms', score: 96, status: 'excellent' },
+    ],
     recentChecks: [
-      { name: 'NDIS pricing compliance', status: 'Passed', description: 'All pricing matches NDIS guidelines' },
-      { name: 'Service agreement validation', status: 'Passed', description: 'All agreements properly documented' },
-      { name: 'Invoice Documentation', status: 'Passed', description: 'All invoices properly documented' },
-      { name: 'Budget Adherence', status: 'Passed', description: 'All transactions within limits' },
+      {
+        date: '2026-02-18',
+        type: 'Invoice Audit',
+        result: 'Passed',
+        notes: 'All invoices properly documented',
+      },
+      {
+        date: '2026-02-15',
+        type: 'Service Records Review',
+        result: 'Passed',
+        notes: 'Minor formatting issues noted',
+      },
     ],
   };
 }
@@ -156,16 +218,25 @@ export function generateComplianceMetrics() {
 export function generateInvoiceRecommendations() {
   return [
     {
-      invoiceNumber: 'INV-2024-001',
+      participant: 'Njeri Kamau',
+      amount: 'KES 45,000',
       confidence: 92,
-      action: 'Approve',
-      reason: 'Pricing matches NDIS guidelines and provider has strong history',
+      reason: 'All services delivered and documented. Ready for submission.',
+      action: 'approve',
     },
     {
-      invoiceNumber: 'INV-2024-002',
-      confidence: 88,
-      action: 'Approve',
-      reason: 'Service delivery confirmed and within budget allocation',
+      participant: 'Otieno Odhiambo',
+      amount: 'KES 28,500',
+      confidence: 78,
+      reason: 'Missing one service delivery note. Request documentation before approval.',
+      action: 'request_info',
+    },
+    {
+      participant: 'Wambui Ndung\'u',
+      amount: 'KES 62,000',
+      confidence: 95,
+      reason: 'Complete documentation. Participant has sufficient budget remaining.',
+      action: 'approve',
     },
   ];
 }
@@ -174,20 +245,47 @@ export function generatePortfolioOptimization() {
   return {
     opportunities: [
       {
-        title: 'Budget Reallocation',
-        description: 'Move $1,200 from underutilized transport to therapy services',
+        type: 'Budget Reallocation',
         impact: 'High',
+        description: 'Reallocate KES 120,000 from underutilized Core Supports to Capacity Building for 3 participants',
+        potentialSavings: 'KES 35,000',
       },
       {
-        title: 'Service Efficiency',
-        description: 'Consolidate providers to reduce administrative overhead',
+        type: 'Service Efficiency',
         impact: 'Medium',
+        description: 'Consolidate therapy sessions for participants in Westlands area to reduce travel time',
+        potentialSavings: 'KES 18,000',
       },
       {
-        title: 'Provider Consolidation',
-        description: 'Use single provider for OT and Physio to save 10%',
+        type: 'Provider Consolidation',
         impact: 'Medium',
+        description: 'Switch 5 participants to preferred providers with better rates',
+        potentialSavings: 'KES 22,000',
       },
+    ],
+  };
+}
+
+export function generateRevenueAnalytics() {
+  return {
+    monthlyForecast: [
+      { month: 'Mar', projected: 420000, actual: 0 },
+      { month: 'Apr', projected: 445000, actual: 0 },
+      { month: 'May', projected: 438000, actual: 0 },
+    ],
+    currentMonth: {
+      revenue: 'KES 385,000',
+      growth: '+12%',
+      topServices: [
+        { name: 'Physiotherapy', revenue: 'KES 145,000' },
+        { name: 'Occupational Therapy', revenue: 'KES 128,000' },
+        { name: 'Speech Therapy', revenue: 'KES 112,000' },
+      ],
+    },
+    insights: [
+      'Revenue trending 12% above last month',
+      'Physiotherapy bookings increased by 18%',
+      'Consider expanding capacity for high-demand services',
     ],
   };
 }
@@ -195,16 +293,14 @@ export function generatePortfolioOptimization() {
 export function generateBookingOptimization() {
   return {
     optimalSlots: [
-      { day: 'Tuesday', time: '2:00-4:00 PM', increase: '+30%' },
-      { day: 'Thursday', time: '10:00 AM-12:00 PM', increase: '+25%' },
+      { time: 'Tuesday 10:00 AM', bookingRate: 95, reason: 'Highest demand slot' },
+      { time: 'Thursday 2:00 PM', bookingRate: 88, reason: 'Popular afternoon slot' },
+      { time: 'Friday 9:00 AM', bookingRate: 82, reason: 'End of week preference' },
     ],
-    bundlingSuggestions: [
-      'Offer combined physio + OT sessions - 68% of clients book both services',
-      'Package group therapy sessions for better utilization',
-    ],
-    efficiencyTips: [
-      'Reduce 15-min gaps between sessions to increase daily capacity by 2 clients',
-      'Implement online booking to reduce no-shows by 40%',
+    suggestions: [
+      'Offer group sessions on Wednesdays to increase utilization',
+      'Bundle physiotherapy with occupational therapy for 10% discount',
+      'Add evening slots (5-7 PM) - high demand from working participants',
     ],
   };
 }
@@ -212,92 +308,66 @@ export function generateBookingOptimization() {
 export function generateClientNeedsPrediction() {
   return {
     nextMonth: [
-      { service: 'Occupational Therapy', trend: '+15%', demand: 'High' },
-      { service: 'Speech Pathology', trend: 'Stable', demand: 'Medium' },
-      { service: 'Physiotherapy', trend: '+8%', demand: 'Medium' },
-    ],
-    bookingEstimate: 45,
-    recommendations: [
-      'Increase OT availability by 2 slots per week',
-      'Consider hiring additional speech pathologist',
-    ],
-  };
-}
-
-export function generateRevenueAnalytics() {
-  return {
-    predictedMonthly: 12400,
-    growthTrend: '+22%',
-    monthOverMonth: '+15%',
-    insights: [
-      'Peak booking periods: Tuesday-Thursday afternoons',
-      'Occupational therapy services showing highest demand',
-      'Group sessions driving 35% of revenue',
-      'Client retention rate: 94% (excellent)',
-    ],
-  };
-}
-
-export function generateCompatibilityScore(): number {
-  return Math.floor(Math.random() * 15) + 85; // 85-100
-}
-
-export function generateCompatibilityInsights() {
-  return {
-    serviceAlignment: 95,
-    budgetFit: 88,
-    availabilityMatch: 92,
-    performanceHistory: 90,
-    factors: [
-      '95% match with participant goals',
-      'Within allocated budget',
-      'High availability match',
-      'Excellent performance history',
+      {
+        service: 'Physiotherapy',
+        predictedBookings: 24,
+        trend: 'up',
+        confidence: 89,
+        recommendation: 'Increase availability by 2 slots per week',
+      },
+      {
+        service: 'Occupational Therapy',
+        predictedBookings: 18,
+        trend: 'stable',
+        confidence: 85,
+        recommendation: 'Maintain current capacity',
+      },
+      {
+        service: 'Speech Therapy',
+        predictedBookings: 15,
+        trend: 'up',
+        confidence: 78,
+        recommendation: 'Consider hiring additional therapist',
+      },
     ],
   };
-}
-
-export function generateFilterSuggestions() {
-  return [
-    { filter: 'Specializes in mobility support', relevance: 'High' },
-    { filter: 'Accepts new clients', relevance: 'High' },
-    { filter: 'Weekend availability', relevance: 'Medium' },
-    { filter: 'Bulk booking discounts', relevance: 'Medium' },
-  ];
 }
 
 export function generateBookingEstimate() {
   return {
-    duration: 60,
-    cost: 193.99,
-    budgetImpact: 'Low',
-    remainingFunds: 2206.01,
-    category: 'Core Supports',
+    duration: '60 minutes',
+    totalCost: 'KES 8,500',
+    budgetImpact: {
+      category: 'Core Supports',
+      remaining: 'KES 145,000',
+      afterBooking: 'KES 136,500',
+      percentUsed: 42,
+    },
   };
 }
 
 export function generateServiceSuggestions() {
   return [
     {
-      service: 'Occupational Therapy',
-      price: 193.99,
-      budgetFit: 'Excellent',
-      goalAlignment: 95,
-      description: 'Mobility and daily living skills',
-    },
-    {
-      service: 'Physiotherapy',
-      price: 214.24,
-      budgetFit: 'Good',
+      service: 'Physiotherapy Session',
+      price: 'KES 8,500',
+      budgetFit: 95,
       goalAlignment: 88,
-      description: 'Physical rehabilitation and strength',
+      description: 'Specialized mobility and strength training',
     },
     {
-      service: 'Speech Pathology',
-      price: 193.99,
-      budgetFit: 'Excellent',
-      goalAlignment: 82,
-      description: 'Communication skills development',
+      service: 'Occupational Therapy',
+      price: 'KES 7,800',
+      budgetFit: 92,
+      goalAlignment: 85,
+      description: 'Daily living skills development',
+    },
+    {
+      service: 'Group Exercise Class',
+      price: 'KES 3,500',
+      budgetFit: 98,
+      goalAlignment: 75,
+      description: 'Social participation and fitness',
     },
   ];
 }
@@ -305,19 +375,50 @@ export function generateServiceSuggestions() {
 export function generateTimeSlotRecommendations() {
   return [
     {
-      time: 'Tuesday 10:00 AM',
-      confidence: 95,
-      reason: 'Matches your preferred morning schedule',
+      time: 'Tuesday, Feb 25 at 10:00 AM',
+      confidence: 94,
+      reason: 'Provider has excellent availability and this matches your preferred morning schedule',
     },
     {
-      time: 'Thursday 2:00 PM',
-      confidence: 88,
-      reason: 'Provider has high availability',
+      time: 'Thursday, Feb 27 at 2:00 PM',
+      confidence: 87,
+      reason: 'Alternative slot with good availability',
     },
     {
-      time: 'Friday 9:00 AM',
-      confidence: 85,
-      reason: 'Optimal for weekly therapy routine',
+      time: 'Friday, Feb 28 at 9:30 AM',
+      confidence: 82,
+      reason: 'End of week slot, slightly lower demand',
     },
   ];
+}
+
+export function generateFilterSuggestions() {
+  return [
+    {
+      filter: 'Providers in Westlands',
+      relevance: 95,
+      reason: 'Based on your location preference',
+    },
+    {
+      filter: 'Physiotherapy specialists',
+      relevance: 88,
+      reason: 'Matches your current plan goals',
+    },
+    {
+      filter: 'Available this week',
+      relevance: 82,
+      reason: 'You have upcoming budget milestones',
+    },
+  ];
+}
+
+export function generateCompatibilityInsights() {
+  return {
+    topFactors: [
+      { factor: 'Service Alignment', score: 92, description: 'Offers services matching your plan' },
+      { factor: 'Budget Fit', score: 88, description: 'Pricing within your budget range' },
+      { factor: 'Availability Match', score: 85, description: 'Available during your preferred times' },
+      { factor: 'Location', score: 78, description: 'Within 5km of your address' },
+    ],
+  };
 }
